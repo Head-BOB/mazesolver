@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maze Solver</title>
+    <title>Maze Solver & Generator</title>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -19,6 +19,8 @@
             --font-title: 'Merriweather', serif;
             --font-body: 'Source Sans Pro', sans-serif;
             --border-radius: 8px;
+            --generated-maze-wall-color: var(--text-main);
+            --generated-maze-path-color: var(--bg-page);
         }
         .icon svg { width: 1em; height: 1em; fill: var(--text-main); margin-right: 8px; vertical-align: -0.15em; }
         body {
@@ -45,7 +47,7 @@
             border-bottom: 1px solid var(--accent-border); padding-bottom: 8px; display: flex; align-items: center;
         }
         .control-group label { font-weight: 600; color: var(--text-muted); font-size: 0.9em; }
-        .control-group input[type="file"], .control-group input[type="number"], .control-group button {
+        .control-group input[type="file"], .control-group input[type="number"], .control-group select, .control-group button {
             padding: 9px 12px; border-radius: 6px; border: 1px solid var(--text-muted);
             background-color: var(--bg-page); color: var(--text-main); font-family: var(--font-body);
             font-size: 0.95em; transition: border-color 0.2s ease;
@@ -54,7 +56,7 @@
             background-color: var(--button-bg); color: var(--bg-page); border: none; padding: 7px 10px;
             border-radius: 4px; cursor: pointer; margin-right: 10px; font-weight: 600;
         }
-        .control-group input:focus, .control-group button:focus-visible {
+        .control-group input:focus, .control-group select:focus, .control-group button:focus-visible {
             outline: none; border-color: var(--highlight-blue); box-shadow: 0 0 0 2px rgba(94, 128, 156, 0.3);
         }
         .control-group button {
@@ -63,6 +65,7 @@
             transition: background-color 0.2s ease, border-color 0.2s ease;
         }
         .control-group button:hover { background-color: var(--button-hover-bg); border-color: var(--button-hover-bg); }
+        .control-group button:disabled { background-color: #ddd; color: #aaa; cursor: not-allowed; border-color: #ccc;}
         .control-group button.active { background-color: var(--highlight-blue); border-color: var(--highlight-blue); color: white; }
         .control-group button#downloadButton { background-color: #607d8b; }
         .control-group button#downloadButton:hover { background-color: #546e7a; }
@@ -83,13 +86,21 @@
             animation: spin 0.8s linear infinite; display: none; 
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .maze-display-area {
+        .maze-display-area, .generator-display-area {
             position: relative; width: 100%; max-width: 600px; margin: 15px auto 0 auto; 
             border: 1px solid var(--text-muted); border-radius: var(--border-radius);
             overflow: hidden; background-color: #fff; 
         }
-        #mazeImage { display: block; width: 100%; height: auto; } 
+        #mazeImage, #generatedMazeCanvas { display: block; width: 100%; height: auto; } 
         #solutionCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: auto; }
+        
+        .section-divider {
+            border: 0;
+            height: 1px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0), var(--accent-border), rgba(0, 0, 0, 0));
+            margin: 30px 0;
+        }
+
         @media (max-width: 600px) { 
             .main-container { padding: 10px; margin-top: 10px;} header h1 { font-size: 1.8em; }
             .controls-grid { grid-template-columns: 1fr; } .control-group { min-height: auto; padding: 12px;}
@@ -100,21 +111,21 @@
 <body>
     <div class="main-container">
         <header>
-            <h1>Maze Solver</h1>
-            <p>Present your chart, and let this humble cartographer illuminate the hidden passages.</p>
+            <h1>Maze Solver & Generator</h1>
+            <p>Present your chart or craft a new labyrinth, and let this humble cartographer illuminate the passages.</p>
         </header>
 
         <div class="controls-grid">
-             <div class="control-group"><h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span>1. The Map</h3><label for="imageUpload">Upload Maze Image:</label><input type="file" id="imageUpload" accept="image/*"></div>
-             <div class="control-group"><h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83zM3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM21.12 6.92l-2.79-2.79c-.78-.78-2.05-.78-2.83 0L3.38 16.25c-.78.78-.78 2.05 0 2.83.78.78 2.05.78 2.83 0L19 6.25c.78-.78.78-2.05 0-2.83z"/></svg></span>2. Cartographer's Tools</h3><label for="cellSize" title="Precision of analysis. Smaller (1-3) for intricate maps (slower). Larger (5-10) for simpler (faster).">Detail Level (Cell Size px):</label><input type="number" id="cellSize" value="3" min="1" max="50"><label for="pathThreshold" title="How light (0-255) must a mark be to count as a path? Assumes paths are lighter than walls.">Path Mark Sensitivity:</label><input type="number" id="pathThreshold" value="128" min="0" max="255"></div>
-             <div class="control-group"><h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>3. Mark Landmarks</h3><button id="autoDetectButton">Auto-Detect Start/End</button><button id="setStartButton">Set Start Manually</button><button id="setEndButton">Set End Manually</button></div>
-             <div class="control-group"><h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>4. Chart Route!</h3><button id="solveShortestButton">Find Shortest Route</button><button id="findAllPathsButton">Explore All Routes (Intensive!)</button><button id="downloadButton" style="display:none;">Download Marked Map</button></div>
+             <div class="control-group"><h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span>1. The Map (Solver)</h3><label for="imageUpload">Upload Maze Image:</label><input type="file" id="imageUpload" accept="image/*"></div>
+             <div class="control-group"><h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83zM3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM21.12 6.92l-2.79-2.79c-.78-.78-2.05-.78-2.83 0L3.38 16.25c-.78.78-.78 2.05 0 2.83.78.78 2.05.78 2.83 0L19 6.25c.78-.78.78-2.05 0-2.83z"/></svg></span>2. Cartographer's Tools (Solver)</h3><label for="cellSize" title="Precision of analysis. Smaller (1-3) for intricate maps (slower). Larger (5-10) for simpler (faster).">Detail Level (Cell Size px):</label><input type="number" id="cellSize" value="3" min="1" max="50"><label for="pathThreshold" title="How light (0-255) must a mark be to count as a path? Assumes paths are lighter than walls.">Path Mark Sensitivity:</label><input type="number" id="pathThreshold" value="128" min="0" max="255"></div>
+             <div class="control-group"><h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>3. Mark Landmarks (Solver)</h3><button id="autoDetectButton">Auto-Detect Start/End</button><button id="setStartButton">Set Start Manually</button><button id="setEndButton">Set End Manually</button></div>
+             <div class="control-group"><h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>4. Chart Route! (Solver)</h3><button id="solveShortestButton">Find Shortest Route</button><button id="findAllPathsButton">Explore All Routes (Intensive!)</button><button id="downloadButton" style="display:none;">Download Marked Map</button></div>
         </div>
 
         <div class="info-bar">
-            <p>Start: <span id="startPointInfo">Unmarked</span></p>
-            <p>End: <span id="endPointInfo">Unmarked</span></p>
-            <p>Routes Found: <span id="pathsFoundInfo">None</span></p>
+            <p>Solver Start: <span id="startPointInfo">Unmarked</span></p>
+            <p>Solver End: <span id="endPointInfo">Unmarked</span></p>
+            <p>Solver Routes Found: <span id="pathsFoundInfo">None</span></p>
         </div>
         
         <div id="status-container">
@@ -126,28 +137,65 @@
             <img id="mazeImage" src="#" alt="Uploaded Maze Map" style="display:none;">
             <canvas id="solutionCanvas"></canvas>
         </div>
+
+        <hr class="section-divider">
+
+        <header>
+            <h2>Labyrinth Architect</h2>
+            <p>Design your own intricate mazes, from simple charts to sprawling dungeons.</p>
+        </header>
+
+        <div class="controls-grid">
+            <div class="control-group">
+                <h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 14H4V6h16v11zM6 7h2v2H6zm0 3h2v2H6zm0 3h2v2H6zm10 0h2v2h-2zm0-3h2v2h-2zm0-3h2v2h-2z"/></svg></span>A. Dimensions</h3>
+                <label for="genWidth">Width (cells):</label>
+                <input type="number" id="genWidth" value="30" min="5" max="500">
+                <label for="genHeight">Height (cells):</label>
+                <input type="number" id="genHeight" value="20" min="5" max="500">
+            </div>
+            <div class="control-group">
+                <h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.5-1.12 2.5-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5S15.12 12 16.5 12zm-9 0c1.38 0 2.5-1.12 2.5-2.5S8.88 7 7.5 7C6.12 7 5 8.12 5 9.5S6.12 12 7.5 12zm9 3c-1.33 0-4.5 .67-4.5 2v1h9v-1c0-1.33-3.17-2-4.5-2zm-9 0c-1.33 0-4.5 .67-4.5 2v1h9v-1c0-1.33-3.17-2-4.5-2z"/></svg></span>B. Complexity</h3>
+                 <label for="genDifficulty">Select Difficulty:</label>
+                <select id="genDifficulty">
+                    <option value="easy">Easy (20x15)</option>
+                    <option value="medium" selected>Medium (40x30)</option>
+                    <option value="hard">Hard (80x60)</option>
+                    <option value="extreme">Extreme (150x100)</option>
+                    <option value="alien">"Alien" (300x200 - Warning: Slow!)</option>
+                    <option value="custom">Custom Dimensions</option>
+                </select>
+            </div>
+            <div class="control-group" style="grid-column: span 2;"> 
+                 <h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></span>C. Generate & Use</h3>
+                <button id="generateMazeButton">Generate New Labyrinth</button>
+                <button id="useGeneratedMazeButton" style="display:none;">Use This Labyrinth in Solver</button>
+            </div>
+        </div>
+        <div class="generator-display-area">
+            <canvas id="generatedMazeCanvas"></canvas>
+        </div>
+
     </div>
 
     <script id="maze-worker" type="javascript/worker">
         self.onmessage = function(e) {
-            const { action, imageData, imageWidth, imageHeight, cellSize, pathThreshold, startCoords, endCoords, MAX_PATHS_TO_FIND, MAX_DFS_SEARCH_TIME_MS } = e.data;
+            const { action, imageData, imageWidth, imageHeight, cellSize, pathThreshold, startCoords, endCoords, 
+                    MAX_PATHS_TO_FIND, MAX_DFS_SEARCH_TIME_MS, 
+                    genWidth, genHeight } = e.data;
+            
             let mazeGrid = [];
             let gridWidth = 0;
             let gridHeight = 0;
 
-            function isValidPoint(coord, gW, gH) {
-                return coord && coord.y >= 0 && coord.y < gH && coord.x >= 0 && coord.x < gW;
-            }
+            function isValidPoint(coord, gW, gH) { return coord && coord.y >= 0 && coord.y < gH && coord.x >= 0 && coord.x < gW; }
 
             function buildMazeGrid_worker() {
                 self.postMessage({ statusUpdate: "Analyzing map details..." });
                 gridWidth = Math.floor(imageWidth / cellSize);
                 gridHeight = Math.floor(imageHeight / cellSize);
                 if (gridWidth <= 0 || gridHeight <= 0) { mazeGrid = []; return false; }
-
-                const fullImageData = imageData.data; 
+                const fullImgData = imageData.data; 
                 const fullImgDataWidth = imageData.width;
-
                 for (let y = 0; y < gridHeight; y++) {
                     const row = [];
                     for (let x = 0; x < gridWidth; x++) {
@@ -155,81 +203,115 @@
                         let sumBrightness = 0; let pixelCount = 0;
                         for (let cellPixY = 0; cellPixY < cellSize; cellPixY++) {
                             for (let cellPixX = 0; cellPixX < cellSize; cellPixX++) {
-                                const actualX = sx + cellPixX;
-                                const actualY = sy + cellPixY;
+                                const actualX = sx + cellPixX; const actualY = sy + cellPixY;
                                 if (actualX < imageWidth && actualY < imageHeight) {
-                                    const R_index = (actualY * fullImgDataWidth + actualX) * 4;
-                                    if (R_index + 2 < fullImageData.length) {
-                                       sumBrightness += (fullImageData[R_index] + fullImageData[R_index+1] + fullImageData[R_index+2]) / 3;
+                                    const R_idx = (actualY * fullImgDataWidth + actualX) * 4;
+                                    if (R_idx + 2 < fullImgData.length) {
+                                       sumBrightness += (fullImgData[R_idx] + fullImgData[R_idx+1] + fullImgData[R_idx+2]) / 3;
                                        pixelCount++;
                                     }
                                 }
                             }
                         }
-                        const avgBrightness = pixelCount > 0 ? sumBrightness / pixelCount : 0;
-                        row.push(avgBrightness > pathThreshold ? 1 : 0);
+                        row.push((pixelCount > 0 ? sumBrightness / pixelCount : 0) > pathThreshold ? 1 : 0);
                     }
                     mazeGrid.push(row);
-                     if (y % Math.floor(gridHeight/10) === 0 && y > 0) { 
-                        self.postMessage({ statusUpdate: `Surveying map sectors... (${Math.round((y/gridHeight)*100)}%)` });
-                    }
+                    if (y % Math.floor(gridHeight/10) === 0 && y > 0) { self.postMessage({ statusUpdate: `Surveying map... (${Math.round((y/gridHeight)*100)}%)` });}
                 }
-                self.postMessage({ statusUpdate: "Map grid constructed." });
-                return true;
+                self.postMessage({ statusUpdate: "Map grid constructed." }); return true;
             }
 
-            function solveBFS_worker() {
+            function solveBFS_worker() { 
                 self.postMessage({ statusUpdate: "Calculating shortest route..." });
-                const queue = [{ x: startCoords.x, y: startCoords.y, path: [] }];
+                const q = [{ x: startCoords.x, y: startCoords.y, path: [] }];
                 const visited = new Set([`${startCoords.x},${startCoords.y}`]);
-                const directions = [ { dx: 0, dy: -1 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 }, { dx: 1, dy: 0 } ];
-                while (queue.length > 0) {
-                    const current = queue.shift(); const { x, y, path } = current;
+                const dirs = [ { dx: 0, dy: -1 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 }, { dx: 1, dy: 0 } ];
+                while (q.length > 0) {
+                    const curr = q.shift(); const { x, y, path } = curr;
                     if (x === endCoords.x && y === endCoords.y) return path.concat([{ x, y }]);
-                    for (const dir of directions) {
-                        const nextX = x + dir.dx; const nextY = y + dir.dy;
-                        if (isValidPoint({x:nextX, y:nextY}, gridWidth, gridHeight) && mazeGrid[nextY][nextX] === 1 && !visited.has(`${nextX},${nextY}`)) {
-                            visited.add(`${nextX},${nextY}`);
-                            queue.push({ x: nextX, y: nextY, path: path.concat([{x,y}]) });
+                    for (const dir of dirs) {
+                        const nX = x + dir.dx; const nY = y + dir.dy;
+                        if (isValidPoint({x:nX, y:nY}, gridWidth, gridHeight) && mazeGrid[nY][nX] === 1 && !visited.has(`${nX},${nY}`)) {
+                            visited.add(`${nX},${nY}`); q.push({ x: nX, y: nY, path: path.concat([{x,y}]) });
                         }
                     }
                 }
                 return null;
             }
             
-            function solveDFS_findAllPaths_worker() {
-                self.postMessage({ statusUpdate: "Exploring all known passages..." });
-                const allPathsFound = []; const currentPathStack = []; const visitedInThisPath = new Set();
-                const startTime = Date.now(); let limitReachedType = null;
-                let pathsPolled = 0;
-
-                function dfsRecursive(currX, currY) {
-                    if (allPathsFound.length >= MAX_PATHS_TO_FIND) { limitReachedType = 'max routes'; return; }
-                    if (Date.now() - startTime > MAX_DFS_SEARCH_TIME_MS) { limitReachedType = 'time limit'; return; }
-                    currentPathStack.push({x: currX, y: currY}); visitedInThisPath.add(`${currX},${currY}`);
-                    if (currX === endCoords.x && currY === endCoords.y) {
-                        allPathsFound.push([...currentPathStack]); 
-                        pathsPolled++;
-                        if (pathsPolled % 50 === 0) { 
-                           self.postMessage({ statusUpdate: `Found ${allPathsFound.length} routes...` });
-                        }
+            function solveDFS_findAllPaths_worker() { 
+                self.postMessage({ statusUpdate: "Exploring all passages..." });
+                const allP = []; const currPStack = []; const visitedInPath = new Set();
+                const sTime = Date.now(); let limitRType = null; let pathsPoll = 0;
+                function dfsRec(cX, cY) {
+                    if (allP.length >= MAX_PATHS_TO_FIND) { limitRType = 'max routes'; return; }
+                    if (Date.now() - sTime > MAX_DFS_SEARCH_TIME_MS) { limitRType = 'time limit'; return; }
+                    currPStack.push({x: cX, y: cY}); visitedInPath.add(`${cX},${cY}`);
+                    if (cX === endCoords.x && cY === endCoords.y) {
+                        allP.push([...currPStack]); pathsPoll++;
+                        if (pathsPoll % 50 === 0) { self.postMessage({ statusUpdate: `Found ${allP.length} routes...` });}
                     } else {
-                        const directions = [ { dx: 0, dy: -1 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 } ]; 
-                        for (const dir of directions) {
-                            if (limitReachedType) break; 
-                            const nextX = currX + dir.dx; const nextY = currY + dir.dy;
-                            if (isValidPoint({x:nextX, y:nextY}, gridWidth, gridHeight) && mazeGrid[nextY][nextX] === 1 && !visitedInThisPath.has(`${nextX},${nextY}`)) {
-                                dfsRecursive(nextX, nextY);
+                        const dirs = [ { dx: 0, dy: -1 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 } ]; 
+                        for (const dir of dirs) {
+                            if (limitRType) break; 
+                            const nX = cX + dir.dx; const nY = cY + dir.dy;
+                            if (isValidPoint({x:nX, y:nY}, gridWidth, gridHeight) && mazeGrid[nY][nX] === 1 && !visitedInPath.has(`${nX},${nY}`)) {
+                                dfsRec(nX, nY);
                             }
                         }
                     }
-                    visitedInThisPath.delete(`${currX},${currY}`); currentPathStack.pop();
+                    visitedInPath.delete(`${cX},${cY}`); currPStack.pop();
                 }
-                dfsRecursive(startCoords.x, startCoords.y);
-                return { paths: allPathsFound, limitReached: !!limitReachedType, limitType: limitReachedType };
+                dfsRec(startCoords.x, startCoords.y);
+                return { paths: allP, limitReached: !!limitRType, limitType: limitRType };
             }
 
-            if (action === 'buildAndSolveBFS') {
+            function generateMaze_worker(width, height) {
+                self.postMessage({ statusUpdate: `Constructing labyrinth (${width}x${height})...` });
+                let grid = Array(height).fill(null).map(() => Array(width).fill(1)); 
+                let stack = [];
+                let startX = Math.floor(Math.random() * (width/2)) * 2; 
+                let startY = Math.floor(Math.random() * (height/2)) * 2;
+                grid[startY][startX] = 0; 
+                stack.push([startX, startY]);
+                let cellsProcessed = 0;
+                const totalCellsToProcess = (width * height) / 4; 
+
+                while (stack.length > 0) {
+                    let [cx, cy] = stack[stack.length - 1];
+                    let neighbors = [];
+                    if (cx > 1 && grid[cy][cx - 2] === 1) neighbors.push([cx - 2, cy, 'W']);
+                    if (cx < width - 2 && grid[cy][cx + 2] === 1) neighbors.push([cx + 2, cy, 'E']);
+                    if (cy > 1 && grid[cy - 2][cx] === 1) neighbors.push([cx, cy - 2, 'N']);
+                    if (cy < height - 2 && grid[cy + 2][cx] === 1) neighbors.push([cx, cy + 2, 'S']);
+
+                    if (neighbors.length > 0) {
+                        let [nx, ny, dir] = neighbors[Math.floor(Math.random() * neighbors.length)];
+                        grid[ny][nx] = 0; 
+                        if (dir === 'W') grid[cy][cx - 1] = 0;
+                        else if (dir === 'E') grid[cy][cx + 1] = 0;
+                        else if (dir === 'N') grid[ny + 1][cx] = 0;
+                        else if (dir === 'S') grid[ny - 1][cx] = 0;
+                        stack.push([nx, ny]);
+                        cellsProcessed++;
+                        if (cellsProcessed % Math.floor(totalCellsToProcess / 20) === 0) { 
+                             self.postMessage({ statusUpdate: `Architecting passages... (${Math.round((cellsProcessed/totalCellsToProcess)*100)}%)` });
+                        }
+                    } else {
+                        stack.pop();
+                    }
+                }
+                grid[0][0] = 0; 
+                if (height > 1 && width > 1) grid[height - 1][width - 1] = 0;
+                if (height > 1 && grid[1][0] === 1) grid[1][0] = 0; 
+                if (height > 1 && width > 1 && grid[height-2][width-1] === 1) grid[height-2][width-1] = 0; 
+
+                self.postMessage({ statusUpdate: "Labyrinth construction complete." });
+                return { generatedMazeGrid: grid, genWidth: width, genHeight: height };
+            }
+
+
+            if (action === 'buildAndSolveBFS') { 
                 if (buildMazeGrid_worker()) {
                     if (!isValidPoint(startCoords, gridWidth, gridHeight) || !mazeGrid[startCoords.y][startCoords.x] ||
                         !isValidPoint(endCoords, gridWidth, gridHeight) || !mazeGrid[endCoords.y][endCoords.x]) {
@@ -240,7 +322,7 @@
                 } else {
                     self.postMessage({ error: "Failed to build maze grid in worker." });
                 }
-            } else if (action === 'buildAndFindAllPaths') {
+            } else if (action === 'buildAndFindAllPaths') { 
                  if (buildMazeGrid_worker()) {
                     if (!isValidPoint(startCoords, gridWidth, gridHeight) || !mazeGrid[startCoords.y][startCoords.x] ||
                         !isValidPoint(endCoords, gridWidth, gridHeight) || !mazeGrid[endCoords.y][endCoords.x]) {
@@ -251,12 +333,15 @@
                 } else {
                     self.postMessage({ error: "Failed to build maze grid in worker." });
                 }
-            } else if (action === 'buildGridForAutodetect') {
+            } else if (action === 'buildGridForAutodetect') { 
                  if (buildMazeGrid_worker()) {
                     self.postMessage({ mazeGridForAutodetect: mazeGrid, gridWidth, gridHeight, action: 'gridForAutodetectResult' });
                  } else {
                     self.postMessage({ error: "Failed to build maze grid for autodetect." });
                  }
+            } else if (action === 'generateMaze') {
+                const mazeData = generateMaze_worker(genWidth, genHeight);
+                self.postMessage({ result: mazeData, action: 'generateMazeResult' });
             }
         };
     </script>
@@ -280,6 +365,14 @@
         const endPointInfo = document.getElementById('endPointInfo');
         const pathsFoundInfo = document.getElementById('pathsFoundInfo');
 
+        const genWidthInput = document.getElementById('genWidth');
+        const genHeightInput = document.getElementById('genHeight');
+        const genDifficultySelect = document.getElementById('genDifficulty');
+        const generateMazeButton = document.getElementById('generateMazeButton');
+        const generatedMazeCanvas = document.getElementById('generatedMazeCanvas');
+        const genCtx = generatedMazeCanvas.getContext('2d');
+        const useGeneratedMazeButton = document.getElementById('useGeneratedMazeButton');
+
         let originalImage = null;
         let imageDisplayedWidth = 0; let imageDisplayedHeight = 0;
         let localMazeGridCache = []; 
@@ -287,36 +380,33 @@
         let startCoords = null; let endCoords = null;
         let settingMode = null; 
         let currentSolutionPath = null;
+        let currentGeneratedMazeGrid = null;
+        let currentGenWidth = 0; let currentGenHeight = 0;
 
         const PATH_COLOR_JS = getComputedStyle(document.documentElement).getPropertyValue('--path-color').trim();
         const SUCCESS_COLOR_JS = '#28a745'; 
         const ERROR_COLOR_JS = '#dc3545';
         const INFO_COLOR_JS = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim();
+        const GENERATED_WALL_COLOR = getComputedStyle(document.documentElement).getPropertyValue('--generated-maze-wall-color').trim();
+        const GENERATED_PATH_COLOR = getComputedStyle(document.documentElement).getPropertyValue('--generated-maze-path-color').trim();
 
         const MAX_PATHS_TO_FIND_CONST = 300; 
         const MAX_DFS_SEARCH_TIME_MS_CONST = 10000; 
         let isProcessing = false;
         let mazeWorker = null;
 
-        function initializeWorker() {
-            const workerScript = document.getElementById('maze-worker').textContent;
+        function initializeWorker() { 
+             const workerScript = document.getElementById('maze-worker').textContent;
             const blob = new Blob([workerScript], { type: 'application/javascript' });
             mazeWorker = new Worker(URL.createObjectURL(blob));
 
             mazeWorker.onmessage = function(e) {
                 const { statusUpdate, result, error, action, mazeGridForDebug, gridWidth: gw, gridHeight: gh, mazeGridForAutodetect } = e.data;
                 
-                if (statusUpdate) {
-                    updateStatus(statusUpdate, 'info', true); 
-                }
+                if (statusUpdate) { updateStatus(statusUpdate, 'info', true); }
+                if (error) { updateStatus(error, 'error'); isProcessing = false; statusLoader.style.display = 'none'; return; }
 
-                if (error) {
-                    updateStatus(error, 'error');
-                    isProcessing = false; statusLoader.style.display = 'none';
-                    return;
-                }
-
-                if (action === 'bfsResult') {
+                if (action === 'bfsResult') { 
                     currentSolutionPath = result;
                     drawPointsAndPath();
                     if (currentSolutionPath) {
@@ -325,7 +415,7 @@
                         updateStatus('Shortest route charted!', 'success');
                     } else { updateStatus('No direct route found.', 'error'); }
                     isProcessing = false; statusLoader.style.display = 'none';
-                } else if (action === 'dfsResult') {
+                } else if (action === 'dfsResult') { 
                     pathsFoundInfo.textContent = `${result.paths.length}${result.limitReached ? `+ (${result.limitType} limit)`: ''}`;
                     if (result.paths.length > 0) {
                         currentSolutionPath = result.paths[Math.floor(Math.random() * result.paths.length)]; 
@@ -344,9 +434,17 @@
                     drawPointsAndPath(); 
                     updateStatus(detectionResult.message, detectionResult.success ? 'success' : 'warning');
                     isProcessing = false; statusLoader.style.display = 'none';
+                } else if (action === 'generateMazeResult') {
+                    currentGeneratedMazeGrid = result.generatedMazeGrid;
+                    currentGenWidth = result.genWidth;
+                    currentGenHeight = result.genHeight;
+                    renderGeneratedMaze(currentGeneratedMazeGrid, currentGenWidth, currentGenHeight);
+                    useGeneratedMazeButton.style.display = 'block';
+                    updateStatus('New labyrinth crafted!', 'success');
+                    isProcessing = false; statusLoader.style.display = 'none';
                 }
             };
-            mazeWorker.onerror = function(e) {
+            mazeWorker.onerror = function(e) { 
                 console.error('Worker error:', e.message, e.filename, e.lineno);
                 updateStatus('A critical error occurred in the map analysis.', 'error');
                 isProcessing = false; statusLoader.style.display = 'none';
@@ -382,6 +480,9 @@
                 imageDisplayedWidth = mazeImage.offsetWidth;
                 imageDisplayedHeight = mazeImage.offsetHeight;
                 drawPointsAndPath();
+            }
+            if (currentGeneratedMazeGrid) { // Also rerender generated maze if visible
+                 renderGeneratedMaze(currentGeneratedMazeGrid, currentGenWidth, currentGenHeight);
             }
         });
         function resetState() {
@@ -587,6 +688,92 @@
             const statusTypeColor = type === 'success' ? SUCCESS_COLOR_JS : (type === 'error' ? ERROR_COLOR_JS : INFO_COLOR_JS);
             statusSpan.parentElement.style.borderColor = statusTypeColor;
         }
+
+        genDifficultySelect.addEventListener('change', function() {
+            const val = this.value;
+            if (val === 'custom') {
+                genWidthInput.disabled = false;
+                genHeightInput.disabled = false;
+            } else {
+                genWidthInput.disabled = true;
+                genHeightInput.disabled = true;
+                const dims = {
+                    'easy': {w: 20, h: 15}, 'medium': {w: 40, h: 30},
+                    'hard': {w: 80, h: 60}, 'extreme': {w: 150, h: 100},
+                    'alien': {w: 300, h: 200} 
+                };
+                if (dims[val]) { genWidthInput.value = dims[val].w; genHeightInput.value = dims[val].h; }
+            }
+        });
+        genDifficultySelect.dispatchEvent(new Event('change')); 
+
+        generateMazeButton.addEventListener('click', () => {
+            if (isProcessing) { updateStatus('Busy with another task...', 'warning'); return; }
+            isProcessing = true;
+            updateStatus('Summoning the Labyrinth Architect...', 'info', true);
+            useGeneratedMazeButton.style.display = 'none';
+            
+            const width = parseInt(genWidthInput.value);
+            const height = parseInt(genHeightInput.value);
+
+            if (isNaN(width) || isNaN(height) || width < 5 || height < 5 || width > 500 || height > 500) {
+                updateStatus('Invalid dimensions for labyrinth. (Min 5x5, Max 500x500)', 'error');
+                isProcessing = false; statusLoader.style.display = 'none'; return;
+            }
+            
+            mazeWorker.postMessage({ action: 'generateMaze', genWidth: width, genHeight: height });
+        });
+
+        function renderGeneratedMaze(grid, mazeW, mazeH) {
+            const displayWidth = generatedMazeCanvas.parentElement.clientWidth; 
+            const genCellSize = Math.max(1, Math.floor(displayWidth / mazeW)); 
+            
+            generatedMazeCanvas.width = mazeW * genCellSize;
+            generatedMazeCanvas.height = mazeH * genCellSize;
+
+            genCtx.fillStyle = GENERATED_PATH_COLOR;
+            genCtx.fillRect(0, 0, generatedMazeCanvas.width, generatedMazeCanvas.height);
+            genCtx.fillStyle = GENERATED_WALL_COLOR;
+
+            for (let y = 0; y < mazeH; y++) {
+                for (let x = 0; x < mazeW; x++) {
+                    if (grid[y][x] === 1) { 
+                        genCtx.fillRect(x * genCellSize, y * genCellSize, genCellSize, genCellSize);
+                    }
+                }
+            }
+        }
+
+        useGeneratedMazeButton.addEventListener('click', () => {
+            if (!currentGeneratedMazeGrid) { updateStatus('No labyrinth crafted to use yet!', 'error'); return; }
+            if (isProcessing) { updateStatus('Busy with another task...', 'warning'); return; }
+            isProcessing = true;
+            updateStatus('Preparing crafted labyrinth for solving...', 'info', true);
+
+            const dataURL = generatedMazeCanvas.toDataURL('image/png');
+            originalImage = new Image();
+            originalImage.onload = () => {
+                solutionCanvas.width = originalImage.naturalWidth;
+                solutionCanvas.height = originalImage.naturalHeight;
+                imageDisplayedWidth = generatedMazeCanvas.offsetWidth; 
+                imageDisplayedHeight = generatedMazeCanvas.offsetHeight;
+                
+                mazeImage.src = dataURL; 
+                mazeImage.style.display = 'block';
+
+                resetState(); 
+
+                updateStatus('Crafted labyrinth ready for charting. Mark landmarks for the solver.', 'success');
+                
+                cellSizeInput.value = "1"; 
+                pathThresholdInput.value = "128"; 
+                isProcessing = false; statusLoader.style.display = 'none';
+                
+                solutionCanvas.scrollIntoView({behavior: "smooth", block: "center"});
+            };
+            originalImage.src = dataURL;
+        });
+
     </script>
 </body>
 </html>
