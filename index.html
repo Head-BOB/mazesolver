@@ -129,7 +129,6 @@
     </div>
 
     <script id="maze-worker" type="javascript/worker">
-        // --- WEB WORKER CODE ---
         self.onmessage = function(e) {
             const { action, imageData, imageWidth, imageHeight, cellSize, pathThreshold, startCoords, endCoords, MAX_PATHS_TO_FIND, MAX_DFS_SEARCH_TIME_MS } = e.data;
             let mazeGrid = [];
@@ -146,7 +145,7 @@
                 gridHeight = Math.floor(imageHeight / cellSize);
                 if (gridWidth <= 0 || gridHeight <= 0) { mazeGrid = []; return false; }
 
-                const fullImageData = imageData.data; // Uint8ClampedArray from main thread
+                const fullImageData = imageData.data; 
                 const fullImgDataWidth = imageData.width;
 
                 for (let y = 0; y < gridHeight; y++) {
@@ -171,7 +170,7 @@
                         row.push(avgBrightness > pathThreshold ? 1 : 0);
                     }
                     mazeGrid.push(row);
-                     if (y % Math.floor(gridHeight/10) === 0 && y > 0) { // Progress update
+                     if (y % Math.floor(gridHeight/10) === 0 && y > 0) { 
                         self.postMessage({ statusUpdate: `Surveying map sectors... (${Math.round((y/gridHeight)*100)}%)` });
                     }
                 }
@@ -211,7 +210,7 @@
                     if (currX === endCoords.x && currY === endCoords.y) {
                         allPathsFound.push([...currentPathStack]); 
                         pathsPolled++;
-                        if (pathsPolled % 50 === 0) { // Update main thread occasionally
+                        if (pathsPolled % 50 === 0) { 
                            self.postMessage({ statusUpdate: `Found ${allPathsFound.length} routes...` });
                         }
                     } else {
@@ -263,8 +262,7 @@
     </script>
 
     <script>
-        // --- MAIN THREAD CODE ---
-        const imageUpload = document.getElementById('imageUpload'); /* ... (all const declarations as before) ... */
+        const imageUpload = document.getElementById('imageUpload');
         const mazeImage = document.getElementById('mazeImage');
         const solutionCanvas = document.getElementById('solutionCanvas');
         const ctx = solutionCanvas.getContext('2d');
@@ -284,10 +282,8 @@
 
         let originalImage = null;
         let imageDisplayedWidth = 0; let imageDisplayedHeight = 0;
-        // mazeGrid, gridWidth, gridHeight are now primarily managed/returned by worker
-        let localMazeGridCache = []; // For auto-detect and manual point validation
+        let localMazeGridCache = []; 
         let localGridWidth = 0; let localGridHeight = 0;
-
         let startCoords = null; let endCoords = null;
         let settingMode = null; 
         let currentSolutionPath = null;
@@ -311,7 +307,7 @@
                 const { statusUpdate, result, error, action, mazeGridForDebug, gridWidth: gw, gridHeight: gh, mazeGridForAutodetect } = e.data;
                 
                 if (statusUpdate) {
-                    updateStatus(statusUpdate, 'info', true); // Keep loader for intermediate updates
+                    updateStatus(statusUpdate, 'info', true); 
                 }
 
                 if (error) {
@@ -322,8 +318,6 @@
 
                 if (action === 'bfsResult') {
                     currentSolutionPath = result;
-                    // localMazeGridCache = mazeGridForDebug; // If needed for drawing validation on main thread
-                    // localGridWidth = gw; localGridHeight = gh;
                     drawPointsAndPath();
                     if (currentSolutionPath) {
                         pathsFoundInfo.textContent = '1 (Shortest)';
@@ -347,7 +341,7 @@
                     localMazeGridCache = mazeGridForAutodetect;
                     localGridWidth = gw; localGridHeight = gh;
                     const detectionResult = performAutoDetectionSummaryFromWorkerData();
-                    drawPointsAndPath(); // Draw potential points
+                    drawPointsAndPath(); 
                     updateStatus(detectionResult.message, detectionResult.success ? 'success' : 'warning');
                     isProcessing = false; statusLoader.style.display = 'none';
                 }
@@ -360,8 +354,7 @@
         }
         initializeWorker();
 
-
-        imageUpload.addEventListener('change', (event) => { /* ... same as before ... */ 
+        imageUpload.addEventListener('change', (event) => { 
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
@@ -384,14 +377,14 @@
                 reader.readAsDataURL(file);
             }
         });
-        window.addEventListener('resize', () => { /* ... same as before ... */ 
+        window.addEventListener('resize', () => { 
             if (originalImage && mazeImage.style.display === 'block') {
                 imageDisplayedWidth = mazeImage.offsetWidth;
                 imageDisplayedHeight = mazeImage.offsetHeight;
                 drawPointsAndPath();
             }
         });
-        function resetState() { /* ... same as before ... */
+        function resetState() {
             localMazeGridCache = []; localGridWidth = 0; localGridHeight = 0;
             startCoords = null; endCoords = null; settingMode = null;
             currentSolutionPath = null;
@@ -424,11 +417,10 @@
                 imageHeight: originalImage.naturalHeight,
                 cellSize: parseInt(cellSizeInput.value),
                 pathThreshold: parseInt(pathThresholdInput.value)
-            }, [imgDataForWorker.data.buffer]); // Transfer ArrayBuffer for performance
+            }, [imgDataForWorker.data.buffer]); 
         });
 
         function performAutoDetectionSummaryFromWorkerData() {
-            // Uses localMazeGridCache, localGridWidth, localGridHeight populated by worker
             let S_found = false, E_found = false; startCoords = null; endCoords = null;
             for (let x = 0; x < localGridWidth; x++) { if (localMazeGridCache[0][x]) { startCoords = {x,y:0}; S_found=true; break; }}
             if(!S_found){ for (let y = 0; y < localGridHeight; y++) { if (localMazeGridCache[y][0]) { startCoords = {x:0,y}; S_found=true; break; }}}
@@ -445,30 +437,24 @@
             return {success, message};
         }
 
-        setStartButton.addEventListener('click', () => { /* ... same ... */ 
+        setStartButton.addEventListener('click', () => { 
             if (isProcessing || !originalImage) { updateStatus('Load a map first.', 'error'); return; }
             settingMode = 'start'; setStartButton.classList.add('active'); setEndButton.classList.remove('active');
             updateStatus('Click on the map to mark the STARTING landmark.');
         });
-        setEndButton.addEventListener('click', () => { /* ... same ... */ 
+        setEndButton.addEventListener('click', () => { 
             if (isProcessing || !originalImage) { updateStatus('Load a map first.', 'error'); return; }
             settingMode = 'end'; setEndButton.classList.add('active'); setStartButton.classList.remove('active');
             updateStatus('Click on the map to mark the DESTINATION landmark.');
         });
-        solutionCanvas.addEventListener('click', (event) => { /* ... same, ensure validatePointWithLocalGrid if needed for immediate feedback ... */ 
+        solutionCanvas.addEventListener('click', (event) => { 
             if (isProcessing || !originalImage || !settingMode) return;
             const rect = solutionCanvas.getBoundingClientRect(); 
             const clickX_on_canvas = event.clientX - rect.left; const clickY_on_canvas = event.clientY - rect.top;
             const scaleX = solutionCanvas.width / imageDisplayedWidth; const scaleY = solutionCanvas.height / imageDisplayedHeight;
             const x_on_image = clickX_on_canvas * scaleX; const y_on_image = clickY_on_canvas * scaleY;
-            const cellSizeVal = parseInt(cellSizeInput.value); // Use a const for cellSize
+            const cellSizeVal = parseInt(cellSizeInput.value); 
             const gridX = Math.floor(x_on_image / cellSizeVal); const gridY = Math.floor(y_on_image / cellSizeVal);
-
-            // Optional: validate against localMazeGridCache if available for immediate feedback
-            // if (localMazeGridCache.length > 0 && (!localMazeGridCache[gridY] || !localMazeGridCache[gridY][gridX])) {
-            //     updateStatus("Chosen point appears to be on a wall (based on last analysis).", "warning");
-            // }
-
 
             if (settingMode === 'start') {
                 startCoords = { x: gridX, y: gridY }; startPointInfo.textContent = `(${gridX}, ${gridY})`;
@@ -483,7 +469,7 @@
             drawPointsAndPath();
         });
         
-        function drawPointsAndPath() { /* ... same ... */ 
+        function drawPointsAndPath() { 
             if(solutionCanvas.width === 0 || solutionCanvas.height === 0) return;
             ctx.clearRect(0, 0, solutionCanvas.width, solutionCanvas.height); 
             const cellSizeVal = parseInt(cellSizeInput.value);
@@ -501,7 +487,7 @@
                 ctx.fill();
             }
         }
-        function drawPath(path, color, cellSizeVal) { /* ... same ... */
+        function drawPath(path, color, cellSizeVal) {
             if (!path || path.length === 0) return;
             ctx.strokeStyle = color; ctx.lineWidth = Math.max(1.5, Math.floor(cellSizeVal * 0.35)); 
             ctx.lineCap = "round"; ctx.lineJoin = "round";
@@ -513,20 +499,19 @@
             ctx.stroke();
         }
 
-        async function commonSolvePreamble(operationName) { /* ... same ... */
+        async function commonSolvePreamble(operationName) {
             if (isProcessing) { updateStatus('Processing previous request...', 'warning'); return false; }
             if (!originalImage) { updateStatus('Load a map first.', 'error'); return false; }
             if (!startCoords || !endCoords) { updateStatus('Mark both Start and End landmarks.', 'error'); return false; }
             isProcessing = true; currentSolutionPath = null; downloadButton.style.display = 'none'; pathsFoundInfo.textContent = 'None';
             updateStatus(`Charting: ${operationName}...`, 'info', true);
-            // No timeout needed here, worker will post updates
             return true;
         }
 
         solveShortestButton.addEventListener('click', async () => {
             if(!await commonSolvePreamble("Shortest Route")) return;
             
-            const tempCanvas = document.createElement('canvas'); // Prepare image data for worker
+            const tempCanvas = document.createElement('canvas'); 
             tempCanvas.width = originalImage.naturalWidth; tempCanvas.height = originalImage.naturalHeight;
             const tempCtx = tempCanvas.getContext('2d');
             tempCtx.drawImage(originalImage, 0, 0);
@@ -538,7 +523,7 @@
                 imageWidth: originalImage.naturalWidth, imageHeight: originalImage.naturalHeight,
                 cellSize: parseInt(cellSizeInput.value), pathThreshold: parseInt(pathThresholdInput.value),
                 startCoords, endCoords
-            }, [imgDataForWorker.data.buffer]); // Transfer buffer
+            }, [imgDataForWorker.data.buffer]); 
         });
         
         findAllPathsButton.addEventListener('click', async () => {
@@ -565,7 +550,7 @@
             }, [imgDataForWorker.data.buffer]);
         });
         
-        downloadButton.addEventListener('click', async () => { /* ... same ... */ 
+        downloadButton.addEventListener('click', async () => { 
             if (isProcessing || !originalImage || !currentSolutionPath) { updateStatus('No marked map to download.', 'error'); return; }
             updateStatus('Preparing map for download...', 'info', true);
             await new Promise(resolve => setTimeout(resolve, 20)); 
@@ -584,7 +569,7 @@
             statusLoader.style.display = 'none';
         });
 
-        function drawPathOnContext(targetCtx, path, color, cellSizeVal) { /* ... same ... */ 
+        function drawPathOnContext(targetCtx, path, color, cellSizeVal) { 
             if (!path || path.length === 0) return;
             targetCtx.strokeStyle = color; targetCtx.lineWidth = Math.max(1.5, Math.floor(cellSizeVal * 0.35));
             targetCtx.lineCap = "round"; targetCtx.lineJoin = "round";
