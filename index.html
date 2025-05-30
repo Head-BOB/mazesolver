@@ -7,211 +7,92 @@
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-page: #fdfcf6; /* Very light cream */
-            --bg-container: #f5f2e9; /* Textured handmade paper appearance */
-            --text-main: #5a4a3b; /* Dark sepia */
-            --text-muted: #8c7853; /* Muted sepia for labels, borders */
-            --accent-border: #d4c8b0; /* Lighter border for contrast */
-            --button-bg: #c8b89c; /* Aged wood/brass */
-            --button-hover-bg: #b0a080; /* Darker aged wood */
-            --path-color: #a52a2a; /* Brownish red ink */
-            --highlight-blue: #5e809c; /* Faded map blue for selected items */
+            --bg-page: #fdfcf6; 
+            --bg-container: #f5f2e9; 
+            --text-main: #5a4a3b; 
+            --text-muted: #8c7853; 
+            --accent-border: #d4c8b0; 
+            --button-bg: #c8b89c;     
+            --button-hover-bg: #b0a080; 
+            --path-color: #a52a2a; 
+            --highlight-blue: #5e809c; 
             --font-title: 'Merriweather', serif;
             --font-body: 'Source Sans Pro', sans-serif;
             --border-radius: 8px;
         }
-
-        /* Basic SVG Icons - single color */
         .icon svg { width: 1em; height: 1em; fill: var(--text-main); margin-right: 8px; vertical-align: -0.15em; }
-
         body {
-            font-family: var(--font-body);
-            margin: 0;
-            padding: 15px;
-            background-color: var(--bg-page);
-            color: var(--text-main);
-            font-size: 15px;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            font-family: var(--font-body); margin: 0; padding: 15px; background-color: var(--bg-page);
+            color: var(--text-main); font-size: 15px; line-height: 1.6;
+            -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
         }
-
         .main-container {
             background-color: var(--bg-container);
-            /* Subtle noise texture for paper effect - performant */
             background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d4c8b0' fill-opacity='0.1' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
-            border: 1px solid var(--accent-border);
-            border-radius: var(--border-radius);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            padding: 20px;
-            width: 100%;
-            max-width: 1100px; /* Allow more width for 4 columns */
-            margin: 15px auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            border: 1px solid var(--accent-border); border-radius: var(--border-radius);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1); padding: 20px; width: 100%;
+            max-width: 1100px; margin: 15px auto; display: flex; flex-direction: column; gap: 20px;
         }
-
-        header h1 {
-            font-family: var(--font-title);
-            color: var(--text-main);
-            text-align: center;
-            font-size: 2.4em;
-            margin-bottom: 5px;
-        }
-        header p {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 1em;
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-
-        .controls-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* Flexible columns */
-            gap: 15px;
-        }
-
+        header h1 { font-family: var(--font-title); color: var(--text-main); text-align: center; font-size: 2.4em; margin-bottom: 5px; }
+        header p { text-align: center; color: var(--text-muted); font-size: 1em; margin-top: 0; margin-bottom: 20px; }
+        .controls-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; }
         .control-group {
-            background-color: transparent; /* Use main container bg */
-            padding: 15px;
-            border: 1px solid var(--accent-border);
-            border-radius: var(--border-radius);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            min-height: 200px; /* Help with visual balance */
+            background-color: transparent; padding: 15px; border: 1px solid var(--accent-border);
+            border-radius: var(--border-radius); display: flex; flex-direction: column; gap: 12px; min-height: 200px;
         }
-
         .control-group h3 {
-            font-family: var(--font-title);
-            color: var(--text-main);
-            font-size: 1.15em;
-            margin: 0 0 10px 0;
-            border-bottom: 1px solid var(--accent-border);
-            padding-bottom: 8px;
-            display: flex;
-            align-items: center;
+            font-family: var(--font-title); color: var(--text-main); font-size: 1.15em; margin: 0 0 10px 0;
+            border-bottom: 1px solid var(--accent-border); padding-bottom: 8px; display: flex; align-items: center;
         }
-
-        .control-group label {
-            font-weight: 600;
-            color: var(--text-muted);
-            font-size: 0.9em;
-        }
-
-        .control-group input[type="file"],
-        .control-group input[type="number"],
-        .control-group button {
-            padding: 9px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--text-muted);
-            background-color: var(--bg-page); /* Lighter inputs */
-            color: var(--text-main);
-            font-family: var(--font-body);
-            font-size: 0.95em;
-            transition: border-color 0.2s ease;
+        .control-group label { font-weight: 600; color: var(--text-muted); font-size: 0.9em; }
+        .control-group input[type="file"], .control-group input[type="number"], .control-group button {
+            padding: 9px 12px; border-radius: 6px; border: 1px solid var(--text-muted);
+            background-color: var(--bg-page); color: var(--text-main); font-family: var(--font-body);
+            font-size: 0.95em; transition: border-color 0.2s ease;
         }
         .control-group input[type="file"]::file-selector-button {
-            background-color: var(--button-bg);
-            color: var(--bg-page);
-            border: none;
-            padding: 7px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 10px;
-            font-weight: 600;
+            background-color: var(--button-bg); color: var(--bg-page); border: none; padding: 7px 10px;
+            border-radius: 4px; cursor: pointer; margin-right: 10px; font-weight: 600;
         }
-         .control-group input:focus, .control-group button:focus-visible { /* Better focus style */
-            outline: none;
-            border-color: var(--highlight-blue);
-            box-shadow: 0 0 0 2px rgba(94, 128, 156, 0.3);
+        .control-group input:focus, .control-group button:focus-visible {
+            outline: none; border-color: var(--highlight-blue); box-shadow: 0 0 0 2px rgba(94, 128, 156, 0.3);
         }
-
         .control-group button {
-            background-color: var(--button-bg);
-            color: var(--bg-page);
-            font-weight: 600;
-            font-size: 1em;
-            cursor: pointer;
-            border: 1px solid var(--text-muted);
+            background-color: var(--button-bg); color: var(--bg-page); font-weight: 600; font-size: 1em;
+            cursor: pointer; border: 1px solid var(--text-muted); 
             transition: background-color 0.2s ease, border-color 0.2s ease;
         }
-        .control-group button:hover {
-            background-color: var(--button-hover-bg);
-            border-color: var(--button-hover-bg);
-        }
-        .control-group button.active { /* For Set Start/End buttons */
-            background-color: var(--highlight-blue);
-            border-color: var(--highlight-blue);
-            color: white;
-        }
-        .control-group button#downloadButton {
-            background-color: #607d8b; /* Muted blue-gray */
-        }
-         .control-group button#downloadButton:hover {
-            background-color: #546e7a;
-        }
-
+        .control-group button:hover { background-color: var(--button-hover-bg); border-color: var(--button-hover-bg); }
+        .control-group button.active { background-color: var(--highlight-blue); border-color: var(--highlight-blue); color: white; }
+        .control-group button#downloadButton { background-color: #607d8b; }
+        .control-group button#downloadButton:hover { background-color: #546e7a; }
         .info-bar {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 15px;
-            padding: 10px 15px;
-            background-color: transparent;
-            border: 1px solid var(--accent-border);
-            border-radius: var(--border-radius);
-            font-size: 0.95em;
+            display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px; padding: 10px 15px;
+            background-color: transparent; border: 1px solid var(--accent-border); border-radius: var(--border-radius); font-size: 0.95em;
         }
-        .info-bar p { margin: 5px;}
-        .info-bar span { color: var(--text-main); font-weight: 600; }
-
+        .info-bar p { margin: 5px;} .info-bar span { color: var(--text-main); font-weight: 600; }
         #status-container {
-            padding: 10px 15px;
-            background-color: transparent;
-            border: 1px solid var(--accent-border);
-            border-radius: var(--border-radius);
-            text-align: center;
-            min-height: 22px;
-            font-family: var(--font-body);
-            font-weight: 600;
-            font-size: 1em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            padding: 10px 15px; background-color: transparent; border: 1px solid var(--accent-border);
+            border-radius: var(--border-radius); text-align: center; min-height: 22px; font-family: var(--font-body);
+            font-weight: 600; font-size: 1em; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
         #status { min-height: 1.2em; display: inline-block; } 
         .status-loader {
-            width: 18px; height: 18px;
-            border: 3px solid rgba(90, 74, 59, 0.2); /* Faint text-main */
-            border-top-color: var(--text-main);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            display: none; 
+            width: 18px; height: 18px; border: 3px solid rgba(90, 74, 59, 0.2); 
+            border-top-color: var(--text-main); border-radius: 50%;
+            animation: spin 0.8s linear infinite; display: none; 
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-
         .maze-display-area {
-            position: relative;
-            width: 100%;
-            max-width: 600px; 
-            margin: 15px auto 0 auto; 
-            border: 1px solid var(--text-muted);
-            border-radius: var(--border-radius);
-            overflow: hidden; 
-            background-color: #fff; /* White background for maze image */
+            position: relative; width: 100%; max-width: 600px; margin: 15px auto 0 auto; 
+            border: 1px solid var(--text-muted); border-radius: var(--border-radius);
+            overflow: hidden; background-color: #fff; 
         }
-        #mazeImage { display: block; width: 100%; height: auto; } /* No opacity by default */
+        #mazeImage { display: block; width: 100%; height: auto; } 
         #solutionCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: auto; }
-        
-        @media (max-width: 600px) { /* More aggressive mobile stacking */
-            .main-container { padding: 10px; margin-top: 10px;}
-            header h1 { font-size: 1.8em; }
-            .controls-grid { grid-template-columns: 1fr; }
-            .control-group { min-height: auto; padding: 12px;}
+        @media (max-width: 600px) { 
+            .main-container { padding: 10px; margin-top: 10px;} header h1 { font-size: 1.8em; }
+            .controls-grid { grid-template-columns: 1fr; } .control-group { min-height: auto; padding: 12px;}
             body { font-size: 14px; }
         }
     </style>
@@ -224,32 +105,10 @@
         </header>
 
         <div class="controls-grid">
-            <div class="control-group">
-                <h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span>1. The Map</h3>
-                <label for="imageUpload">Upload Maze Image:</label>
-                <input type="file" id="imageUpload" accept="image/*">
-            </div>
-
-            <div class="control-group">
-                <h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83zM3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM21.12 6.92l-2.79-2.79c-.78-.78-2.05-.78-2.83 0L3.38 16.25c-.78.78-.78 2.05 0 2.83.78.78 2.05.78 2.83 0L19 6.25c.78-.78.78-2.05 0-2.83z"/></svg></span>2. Cartographer's Tools</h3>
-                <label for="cellSize" title="Precision of analysis. Smaller values (1-3) for very intricate maps (slower). Larger (5-10) for simpler maps (faster).">Detail Level (Cell Size px):</label>
-                <input type="number" id="cellSize" value="3" min="1" max="50">
-                <label for="pathThreshold" title="How light (0-255) must a mark be to count as a path? Assumes paths are lighter than walls.">Path Mark Sensitivity:</label>
-                <input type="number" id="pathThreshold" value="128" min="0" max="255">
-            </div>
-
-            <div class="control-group">
-                <h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>3. Mark Landmarks</h3>
-                <button id="autoDetectButton">Auto-Detect Start/End</button>
-                <button id="setStartButton">Set Start Manually</button>
-                <button id="setEndButton">Set End Manually</button>
-            </div>
-             <div class="control-group">
-                <h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>4. Chart Route!</h3>
-                <button id="solveShortestButton">Find Shortest Route</button>
-                <button id="findAllPathsButton">Explore All Routes (Intensive!)</button>
-                <button id="downloadButton" style="display:none;">Download Marked Map</button>
-            </div>
+             <div class="control-group"><h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span>1. The Map</h3><label for="imageUpload">Upload Maze Image:</label><input type="file" id="imageUpload" accept="image/*"></div>
+             <div class="control-group"><h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83zM3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM21.12 6.92l-2.79-2.79c-.78-.78-2.05-.78-2.83 0L3.38 16.25c-.78.78-.78 2.05 0 2.83.78.78 2.05.78 2.83 0L19 6.25c.78-.78.78-2.05 0-2.83z"/></svg></span>2. Cartographer's Tools</h3><label for="cellSize" title="Precision of analysis. Smaller (1-3) for intricate maps (slower). Larger (5-10) for simpler (faster).">Detail Level (Cell Size px):</label><input type="number" id="cellSize" value="3" min="1" max="50"><label for="pathThreshold" title="How light (0-255) must a mark be to count as a path? Assumes paths are lighter than walls.">Path Mark Sensitivity:</label><input type="number" id="pathThreshold" value="128" min="0" max="255"></div>
+             <div class="control-group"><h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>3. Mark Landmarks</h3><button id="autoDetectButton">Auto-Detect Start/End</button><button id="setStartButton">Set Start Manually</button><button id="setEndButton">Set End Manually</button></div>
+             <div class="control-group"><h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></span>4. Chart Route!</h3><button id="solveShortestButton">Find Shortest Route</button><button id="findAllPathsButton">Explore All Routes (Intensive!)</button><button id="downloadButton" style="display:none;">Download Marked Map</button></div>
         </div>
 
         <div class="info-bar">
@@ -269,12 +128,146 @@
         </div>
     </div>
 
+    <script id="maze-worker" type="javascript/worker">
+        // --- WEB WORKER CODE ---
+        self.onmessage = function(e) {
+            const { action, imageData, imageWidth, imageHeight, cellSize, pathThreshold, startCoords, endCoords, MAX_PATHS_TO_FIND, MAX_DFS_SEARCH_TIME_MS } = e.data;
+            let mazeGrid = [];
+            let gridWidth = 0;
+            let gridHeight = 0;
+
+            function isValidPoint(coord, gW, gH) {
+                return coord && coord.y >= 0 && coord.y < gH && coord.x >= 0 && coord.x < gW;
+            }
+
+            function buildMazeGrid_worker() {
+                self.postMessage({ statusUpdate: "Analyzing map details..." });
+                gridWidth = Math.floor(imageWidth / cellSize);
+                gridHeight = Math.floor(imageHeight / cellSize);
+                if (gridWidth <= 0 || gridHeight <= 0) { mazeGrid = []; return false; }
+
+                const fullImageData = imageData.data; // Uint8ClampedArray from main thread
+                const fullImgDataWidth = imageData.width;
+
+                for (let y = 0; y < gridHeight; y++) {
+                    const row = [];
+                    for (let x = 0; x < gridWidth; x++) {
+                        const sx = x * cellSize; const sy = y * cellSize;
+                        let sumBrightness = 0; let pixelCount = 0;
+                        for (let cellPixY = 0; cellPixY < cellSize; cellPixY++) {
+                            for (let cellPixX = 0; cellPixX < cellSize; cellPixX++) {
+                                const actualX = sx + cellPixX;
+                                const actualY = sy + cellPixY;
+                                if (actualX < imageWidth && actualY < imageHeight) {
+                                    const R_index = (actualY * fullImgDataWidth + actualX) * 4;
+                                    if (R_index + 2 < fullImageData.length) {
+                                       sumBrightness += (fullImageData[R_index] + fullImageData[R_index+1] + fullImageData[R_index+2]) / 3;
+                                       pixelCount++;
+                                    }
+                                }
+                            }
+                        }
+                        const avgBrightness = pixelCount > 0 ? sumBrightness / pixelCount : 0;
+                        row.push(avgBrightness > pathThreshold ? 1 : 0);
+                    }
+                    mazeGrid.push(row);
+                     if (y % Math.floor(gridHeight/10) === 0 && y > 0) { // Progress update
+                        self.postMessage({ statusUpdate: `Surveying map sectors... (${Math.round((y/gridHeight)*100)}%)` });
+                    }
+                }
+                self.postMessage({ statusUpdate: "Map grid constructed." });
+                return true;
+            }
+
+            function solveBFS_worker() {
+                self.postMessage({ statusUpdate: "Calculating shortest route..." });
+                const queue = [{ x: startCoords.x, y: startCoords.y, path: [] }];
+                const visited = new Set([`${startCoords.x},${startCoords.y}`]);
+                const directions = [ { dx: 0, dy: -1 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 }, { dx: 1, dy: 0 } ];
+                while (queue.length > 0) {
+                    const current = queue.shift(); const { x, y, path } = current;
+                    if (x === endCoords.x && y === endCoords.y) return path.concat([{ x, y }]);
+                    for (const dir of directions) {
+                        const nextX = x + dir.dx; const nextY = y + dir.dy;
+                        if (isValidPoint({x:nextX, y:nextY}, gridWidth, gridHeight) && mazeGrid[nextY][nextX] === 1 && !visited.has(`${nextX},${nextY}`)) {
+                            visited.add(`${nextX},${nextY}`);
+                            queue.push({ x: nextX, y: nextY, path: path.concat([{x,y}]) });
+                        }
+                    }
+                }
+                return null;
+            }
+            
+            function solveDFS_findAllPaths_worker() {
+                self.postMessage({ statusUpdate: "Exploring all known passages..." });
+                const allPathsFound = []; const currentPathStack = []; const visitedInThisPath = new Set();
+                const startTime = Date.now(); let limitReachedType = null;
+                let pathsPolled = 0;
+
+                function dfsRecursive(currX, currY) {
+                    if (allPathsFound.length >= MAX_PATHS_TO_FIND) { limitReachedType = 'max routes'; return; }
+                    if (Date.now() - startTime > MAX_DFS_SEARCH_TIME_MS) { limitReachedType = 'time limit'; return; }
+                    currentPathStack.push({x: currX, y: currY}); visitedInThisPath.add(`${currX},${currY}`);
+                    if (currX === endCoords.x && currY === endCoords.y) {
+                        allPathsFound.push([...currentPathStack]); 
+                        pathsPolled++;
+                        if (pathsPolled % 50 === 0) { // Update main thread occasionally
+                           self.postMessage({ statusUpdate: `Found ${allPathsFound.length} routes...` });
+                        }
+                    } else {
+                        const directions = [ { dx: 0, dy: -1 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 } ]; 
+                        for (const dir of directions) {
+                            if (limitReachedType) break; 
+                            const nextX = currX + dir.dx; const nextY = currY + dir.dy;
+                            if (isValidPoint({x:nextX, y:nextY}, gridWidth, gridHeight) && mazeGrid[nextY][nextX] === 1 && !visitedInThisPath.has(`${nextX},${nextY}`)) {
+                                dfsRecursive(nextX, nextY);
+                            }
+                        }
+                    }
+                    visitedInThisPath.delete(`${currX},${currY}`); currentPathStack.pop();
+                }
+                dfsRecursive(startCoords.x, startCoords.y);
+                return { paths: allPathsFound, limitReached: !!limitReachedType, limitType: limitReachedType };
+            }
+
+            if (action === 'buildAndSolveBFS') {
+                if (buildMazeGrid_worker()) {
+                    if (!isValidPoint(startCoords, gridWidth, gridHeight) || !mazeGrid[startCoords.y][startCoords.x] ||
+                        !isValidPoint(endCoords, gridWidth, gridHeight) || !mazeGrid[endCoords.y][endCoords.x]) {
+                        self.postMessage({ error: "Start or End point invalid after grid build." }); return;
+                    }
+                    const path = solveBFS_worker();
+                    self.postMessage({ result: path, mazeGridForDebug: mazeGrid, gridWidth, gridHeight, action: 'bfsResult' });
+                } else {
+                    self.postMessage({ error: "Failed to build maze grid in worker." });
+                }
+            } else if (action === 'buildAndFindAllPaths') {
+                 if (buildMazeGrid_worker()) {
+                    if (!isValidPoint(startCoords, gridWidth, gridHeight) || !mazeGrid[startCoords.y][startCoords.x] ||
+                        !isValidPoint(endCoords, gridWidth, gridHeight) || !mazeGrid[endCoords.y][endCoords.x]) {
+                        self.postMessage({ error: "Start or End point invalid after grid build." }); return;
+                    }
+                    const result = solveDFS_findAllPaths_worker();
+                    self.postMessage({ result: result, action: 'dfsResult' });
+                } else {
+                    self.postMessage({ error: "Failed to build maze grid in worker." });
+                }
+            } else if (action === 'buildGridForAutodetect') {
+                 if (buildMazeGrid_worker()) {
+                    self.postMessage({ mazeGridForAutodetect: mazeGrid, gridWidth, gridHeight, action: 'gridForAutodetectResult' });
+                 } else {
+                    self.postMessage({ error: "Failed to build maze grid for autodetect." });
+                 }
+            }
+        };
+    </script>
+
     <script>
-        const imageUpload = document.getElementById('imageUpload');
+        // --- MAIN THREAD CODE ---
+        const imageUpload = document.getElementById('imageUpload'); /* ... (all const declarations as before) ... */
         const mazeImage = document.getElementById('mazeImage');
         const solutionCanvas = document.getElementById('solutionCanvas');
         const ctx = solutionCanvas.getContext('2d');
-        
         const cellSizeInput = document.getElementById('cellSize');
         const pathThresholdInput = document.getElementById('pathThreshold');
         const autoDetectButton = document.getElementById('autoDetectButton');
@@ -291,8 +284,10 @@
 
         let originalImage = null;
         let imageDisplayedWidth = 0; let imageDisplayedHeight = 0;
-        let mazeGrid = [];
-        let gridWidth, gridHeight;
+        // mazeGrid, gridWidth, gridHeight are now primarily managed/returned by worker
+        let localMazeGridCache = []; // For auto-detect and manual point validation
+        let localGridWidth = 0; let localGridHeight = 0;
+
         let startCoords = null; let endCoords = null;
         let settingMode = null; 
         let currentSolutionPath = null;
@@ -302,11 +297,71 @@
         const ERROR_COLOR_JS = '#dc3545';
         const INFO_COLOR_JS = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim();
 
-        const MAX_PATHS_TO_FIND = 300; // Reduced for better performance
-        const MAX_DFS_SEARCH_TIME_MS = 10000; // Reduced for better performance 
+        const MAX_PATHS_TO_FIND_CONST = 300; 
+        const MAX_DFS_SEARCH_TIME_MS_CONST = 10000; 
         let isProcessing = false;
+        let mazeWorker = null;
 
-        imageUpload.addEventListener('change', (event) => {
+        function initializeWorker() {
+            const workerScript = document.getElementById('maze-worker').textContent;
+            const blob = new Blob([workerScript], { type: 'application/javascript' });
+            mazeWorker = new Worker(URL.createObjectURL(blob));
+
+            mazeWorker.onmessage = function(e) {
+                const { statusUpdate, result, error, action, mazeGridForDebug, gridWidth: gw, gridHeight: gh, mazeGridForAutodetect } = e.data;
+                
+                if (statusUpdate) {
+                    updateStatus(statusUpdate, 'info', true); // Keep loader for intermediate updates
+                }
+
+                if (error) {
+                    updateStatus(error, 'error');
+                    isProcessing = false; statusLoader.style.display = 'none';
+                    return;
+                }
+
+                if (action === 'bfsResult') {
+                    currentSolutionPath = result;
+                    // localMazeGridCache = mazeGridForDebug; // If needed for drawing validation on main thread
+                    // localGridWidth = gw; localGridHeight = gh;
+                    drawPointsAndPath();
+                    if (currentSolutionPath) {
+                        pathsFoundInfo.textContent = '1 (Shortest)';
+                        downloadButton.style.display = 'block';
+                        updateStatus('Shortest route charted!', 'success');
+                    } else { updateStatus('No direct route found.', 'error'); }
+                    isProcessing = false; statusLoader.style.display = 'none';
+                } else if (action === 'dfsResult') {
+                    pathsFoundInfo.textContent = `${result.paths.length}${result.limitReached ? `+ (${result.limitType} limit)`: ''}`;
+                    if (result.paths.length > 0) {
+                        currentSolutionPath = result.paths[Math.floor(Math.random() * result.paths.length)]; 
+                        drawPointsAndPath();
+                        updateStatus(`Found ${result.paths.length} routes${result.limitReached ? ' (limited)' : ''}. Displaying one.`, 'success');
+                        downloadButton.style.display = 'block';
+                        if(result.limitReached) { setTimeout(() => updateStatus(`Exploration halted by ${result.limitType}.`, 'warning'), 100); }
+                    } else {
+                        drawPointsAndPath(); updateStatus('No routes found between these landmarks.', 'error');
+                    }
+                    isProcessing = false; statusLoader.style.display = 'none';
+                } else if (action === 'gridForAutodetectResult') {
+                    localMazeGridCache = mazeGridForAutodetect;
+                    localGridWidth = gw; localGridHeight = gh;
+                    const detectionResult = performAutoDetectionSummaryFromWorkerData();
+                    drawPointsAndPath(); // Draw potential points
+                    updateStatus(detectionResult.message, detectionResult.success ? 'success' : 'warning');
+                    isProcessing = false; statusLoader.style.display = 'none';
+                }
+            };
+            mazeWorker.onerror = function(e) {
+                console.error('Worker error:', e.message, e.filename, e.lineno);
+                updateStatus('A critical error occurred in the map analysis.', 'error');
+                isProcessing = false; statusLoader.style.display = 'none';
+            };
+        }
+        initializeWorker();
+
+
+        imageUpload.addEventListener('change', (event) => { /* ... same as before ... */ 
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
@@ -329,17 +384,16 @@
                 reader.readAsDataURL(file);
             }
         });
-
-        window.addEventListener('resize', () => {
+        window.addEventListener('resize', () => { /* ... same as before ... */ 
             if (originalImage && mazeImage.style.display === 'block') {
                 imageDisplayedWidth = mazeImage.offsetWidth;
                 imageDisplayedHeight = mazeImage.offsetHeight;
                 drawPointsAndPath();
             }
         });
-        
-        function resetState() {
-            mazeGrid = []; startCoords = null; endCoords = null; settingMode = null;
+        function resetState() { /* ... same as before ... */
+            localMazeGridCache = []; localGridWidth = 0; localGridHeight = 0;
+            startCoords = null; endCoords = null; settingMode = null;
             currentSolutionPath = null;
             startPointInfo.textContent = 'Unmarked'; endPointInfo.textContent = 'Unmarked';
             pathsFoundInfo.textContent = 'None';
@@ -356,29 +410,30 @@
             if (isProcessing || !originalImage) { updateStatus('A map must be loaded first.', 'error'); return; }
             isProcessing = true; updateStatus('Auto-detecting landmarks...', 'info', true);
             
-            await new Promise(resolve => setTimeout(resolve, 20)); // Allow UI to update
-            try {
-                buildMazeGrid(); // This is now more optimized
-                if (mazeGrid.length === 0 || (mazeGrid[0] && mazeGrid[0].length === 0)) {
-                     updateStatus('Error: Could not interpret map grid.', 'error'); return;
-                }
-                const detectionResult = performAutoDetectionSummary();
-                drawPointsAndPath();
-                updateStatus(detectionResult.message, detectionResult.success ? 'success' : 'warning');
-            } catch (e) {
-                console.error("Error in auto-detection:", e);
-                updateStatus("An issue occurred during auto-detection.", 'error');
-            } finally {
-                isProcessing = false; statusLoader.style.display = 'none';
-            }
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = originalImage.naturalWidth;
+            tempCanvas.height = originalImage.naturalHeight;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.drawImage(originalImage, 0, 0);
+            const imgDataForWorker = tempCtx.getImageData(0, 0, originalImage.naturalWidth, originalImage.naturalHeight);
+
+            mazeWorker.postMessage({
+                action: 'buildGridForAutodetect',
+                imageData: imgDataForWorker,
+                imageWidth: originalImage.naturalWidth,
+                imageHeight: originalImage.naturalHeight,
+                cellSize: parseInt(cellSizeInput.value),
+                pathThreshold: parseInt(pathThresholdInput.value)
+            }, [imgDataForWorker.data.buffer]); // Transfer ArrayBuffer for performance
         });
 
-        function performAutoDetectionSummary() {
+        function performAutoDetectionSummaryFromWorkerData() {
+            // Uses localMazeGridCache, localGridWidth, localGridHeight populated by worker
             let S_found = false, E_found = false; startCoords = null; endCoords = null;
-            for (let x = 0; x < gridWidth; x++) { if (mazeGrid[0][x]) { startCoords = {x,y:0}; S_found=true; break; }}
-            if(!S_found){ for (let y = 0; y < gridHeight; y++) { if (mazeGrid[y][0]) { startCoords = {x:0,y}; S_found=true; break; }}}
-            for (let x = gridWidth - 1; x >= 0; x--) { if (mazeGrid[gridHeight-1][x]) { endCoords = {x,y:gridHeight-1}; E_found=true; break; }}
-            if(!E_found){ for (let y = gridHeight - 1; y >= 0; y--) { if (mazeGrid[y][gridWidth-1]) { endCoords = {x:gridWidth-1,y}; E_found=true; break; }}}
+            for (let x = 0; x < localGridWidth; x++) { if (localMazeGridCache[0][x]) { startCoords = {x,y:0}; S_found=true; break; }}
+            if(!S_found){ for (let y = 0; y < localGridHeight; y++) { if (localMazeGridCache[y][0]) { startCoords = {x:0,y}; S_found=true; break; }}}
+            for (let x = localGridWidth - 1; x >= 0; x--) { if (localMazeGridCache[localGridHeight-1][x]) { endCoords = {x,y:localGridHeight-1}; E_found=true; break; }}
+            if(!E_found){ for (let y = localGridHeight - 1; y >= 0; y--) { if (localMazeGridCache[y][localGridWidth-1]) { endCoords = {x:localGridWidth-1,y}; E_found=true; break; }}}
             
             if (startCoords) startPointInfo.textContent = `(${startCoords.x}, ${startCoords.y})`; else startPointInfo.textContent = 'Unmarked';
             if (endCoords) endPointInfo.textContent = `(${endCoords.x}, ${endCoords.y})`; else endPointInfo.textContent = 'Unmarked';
@@ -390,26 +445,30 @@
             return {success, message};
         }
 
-        setStartButton.addEventListener('click', () => {
+        setStartButton.addEventListener('click', () => { /* ... same ... */ 
             if (isProcessing || !originalImage) { updateStatus('Load a map first.', 'error'); return; }
             settingMode = 'start'; setStartButton.classList.add('active'); setEndButton.classList.remove('active');
             updateStatus('Click on the map to mark the STARTING landmark.');
         });
-
-        setEndButton.addEventListener('click', () => {
+        setEndButton.addEventListener('click', () => { /* ... same ... */ 
             if (isProcessing || !originalImage) { updateStatus('Load a map first.', 'error'); return; }
             settingMode = 'end'; setEndButton.classList.add('active'); setStartButton.classList.remove('active');
             updateStatus('Click on the map to mark the DESTINATION landmark.');
         });
-
-        solutionCanvas.addEventListener('click', (event) => {
+        solutionCanvas.addEventListener('click', (event) => { /* ... same, ensure validatePointWithLocalGrid if needed for immediate feedback ... */ 
             if (isProcessing || !originalImage || !settingMode) return;
             const rect = solutionCanvas.getBoundingClientRect(); 
             const clickX_on_canvas = event.clientX - rect.left; const clickY_on_canvas = event.clientY - rect.top;
             const scaleX = solutionCanvas.width / imageDisplayedWidth; const scaleY = solutionCanvas.height / imageDisplayedHeight;
             const x_on_image = clickX_on_canvas * scaleX; const y_on_image = clickY_on_canvas * scaleY;
-            const cellSize = parseInt(cellSizeInput.value);
-            const gridX = Math.floor(x_on_image / cellSize); const gridY = Math.floor(y_on_image / cellSize);
+            const cellSizeVal = parseInt(cellSizeInput.value); // Use a const for cellSize
+            const gridX = Math.floor(x_on_image / cellSizeVal); const gridY = Math.floor(y_on_image / cellSizeVal);
+
+            // Optional: validate against localMazeGridCache if available for immediate feedback
+            // if (localMazeGridCache.length > 0 && (!localMazeGridCache[gridY] || !localMazeGridCache[gridY][gridX])) {
+            //     updateStatus("Chosen point appears to be on a wall (based on last analysis).", "warning");
+            // }
+
 
             if (settingMode === 'start') {
                 startCoords = { x: gridX, y: gridY }; startPointInfo.textContent = `(${gridX}, ${gridY})`;
@@ -424,61 +483,62 @@
             drawPointsAndPath();
         });
         
-        function drawPointsAndPath() {
+        function drawPointsAndPath() { /* ... same ... */ 
             if(solutionCanvas.width === 0 || solutionCanvas.height === 0) return;
             ctx.clearRect(0, 0, solutionCanvas.width, solutionCanvas.height); 
-            const cellSize = parseInt(cellSizeInput.value);
-            const pointRadius = Math.max(2.5, cellSize * 0.3); 
+            const cellSizeVal = parseInt(cellSizeInput.value);
+            const pointRadius = Math.max(2.5, cellSizeVal * 0.3); 
 
-            if (currentSolutionPath) drawPath(currentSolutionPath, PATH_COLOR_JS, cellSize);
+            if (currentSolutionPath) drawPath(currentSolutionPath, PATH_COLOR_JS, cellSizeVal);
             if (startCoords) {
                 ctx.fillStyle = SUCCESS_COLOR_JS; ctx.beginPath();
-                ctx.arc(startCoords.x * cellSize + cellSize / 2, startCoords.y * cellSize + cellSize / 2, pointRadius, 0, 2 * Math.PI);
+                ctx.arc(startCoords.x * cellSizeVal + cellSizeVal / 2, startCoords.y * cellSizeVal + cellSizeVal / 2, pointRadius, 0, 2 * Math.PI);
                 ctx.fill();
             }
             if (endCoords) {
                 ctx.fillStyle = ERROR_COLOR_JS; ctx.beginPath();
-                ctx.arc(endCoords.x * cellSize + cellSize / 2, endCoords.y * cellSize + cellSize / 2, pointRadius, 0, 2 * Math.PI);
+                ctx.arc(endCoords.x * cellSizeVal + cellSizeVal / 2, endCoords.y * cellSizeVal + cellSizeVal / 2, pointRadius, 0, 2 * Math.PI);
                 ctx.fill();
             }
         }
-        
-        function drawPath(path, color, cellSize) {
+        function drawPath(path, color, cellSizeVal) { /* ... same ... */
             if (!path || path.length === 0) return;
-            ctx.strokeStyle = color; ctx.lineWidth = Math.max(1.5, Math.floor(cellSize * 0.35)); // Slightly thinner for clarity
+            ctx.strokeStyle = color; ctx.lineWidth = Math.max(1.5, Math.floor(cellSizeVal * 0.35)); 
             ctx.lineCap = "round"; ctx.lineJoin = "round";
             ctx.beginPath();
-            ctx.moveTo(path[0].x * cellSize + cellSize / 2, path[0].y * cellSize + cellSize / 2);
+            ctx.moveTo(path[0].x * cellSizeVal + cellSizeVal / 2, path[0].y * cellSizeVal + cellSizeVal / 2);
             for (let i = 1; i < path.length; i++) {
-                ctx.lineTo(path[i].x * cellSize + cellSize / 2, path[i].y * cellSize + cellSize / 2);
+                ctx.lineTo(path[i].x * cellSizeVal + cellSizeVal / 2, path[i].y * cellSizeVal + cellSizeVal / 2);
             }
             ctx.stroke();
         }
 
-        async function commonSolvePreamble(operationName) {
+        async function commonSolvePreamble(operationName) { /* ... same ... */
             if (isProcessing) { updateStatus('Processing previous request...', 'warning'); return false; }
             if (!originalImage) { updateStatus('Load a map first.', 'error'); return false; }
             if (!startCoords || !endCoords) { updateStatus('Mark both Start and End landmarks.', 'error'); return false; }
             isProcessing = true; currentSolutionPath = null; downloadButton.style.display = 'none'; pathsFoundInfo.textContent = 'None';
             updateStatus(`Charting: ${operationName}...`, 'info', true);
-            await new Promise(resolve => setTimeout(resolve, 20)); // UI update
+            // No timeout needed here, worker will post updates
             return true;
         }
 
         solveShortestButton.addEventListener('click', async () => {
             if(!await commonSolvePreamble("Shortest Route")) return;
-            try {
-                buildMazeGrid();
-                if (!validateGridAndPoints()) return;
-                currentSolutionPath = solveBFS();
-                drawPointsAndPath();
-                if (currentSolutionPath) {
-                    pathsFoundInfo.textContent = '1 (Shortest)';
-                    downloadButton.style.display = 'block';
-                    updateStatus('Shortest route charted!', 'success');
-                } else { updateStatus('No direct route found.', 'error'); }
-            } catch(e) { console.error("Err shortest path:", e); updateStatus("Error charting route.", "error");
-            } finally { isProcessing = false; statusLoader.style.display = 'none'; }
+            
+            const tempCanvas = document.createElement('canvas'); // Prepare image data for worker
+            tempCanvas.width = originalImage.naturalWidth; tempCanvas.height = originalImage.naturalHeight;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.drawImage(originalImage, 0, 0);
+            const imgDataForWorker = tempCtx.getImageData(0, 0, originalImage.naturalWidth, originalImage.naturalHeight);
+
+            mazeWorker.postMessage({
+                action: 'buildAndSolveBFS',
+                imageData: imgDataForWorker,
+                imageWidth: originalImage.naturalWidth, imageHeight: originalImage.naturalHeight,
+                cellSize: parseInt(cellSizeInput.value), pathThreshold: parseInt(pathThresholdInput.value),
+                startCoords, endCoords
+            }, [imgDataForWorker.data.buffer]); // Transfer buffer
         });
         
         findAllPathsButton.addEventListener('click', async () => {
@@ -487,151 +547,35 @@
                 isProcessing = false; statusLoader.style.display = 'none';
                 updateStatus('Full exploration cancelled.', 'warning'); return;
             }
-            try {
-                buildMazeGrid();
-                if (!validateGridAndPoints()) return;
-                const result = solveDFS_findAllPaths();
-                pathsFoundInfo.textContent = `${result.paths.length}${result.limitReached ? `+ (${result.limitType} limit)`: ''}`;
-                if (result.paths.length > 0) {
-                    currentSolutionPath = result.paths[Math.floor(Math.random() * result.paths.length)]; 
-                    drawPointsAndPath();
-                    updateStatus(`Found ${result.paths.length} routes${result.limitReached ? ' (limited)' : ''}. Displaying one.`, 'success');
-                    downloadButton.style.display = 'block';
-                    if(result.limitReached) { await new Promise(r => setTimeout(r, 100)); updateStatus(`Exploration halted by ${result.limitType}.`, 'warning');}
-                } else {
-                    drawPointsAndPath(); updateStatus('No routes found between these landmarks.', 'error');
-                }
-            } catch (e) { console.error("Err all paths:", e); updateStatus("Error during full exploration.", "error");
-            } finally { isProcessing = false; statusLoader.style.display = 'none'; }
+            
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = originalImage.naturalWidth; tempCanvas.height = originalImage.naturalHeight;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.drawImage(originalImage, 0, 0);
+            const imgDataForWorker = tempCtx.getImageData(0, 0, originalImage.naturalWidth, originalImage.naturalHeight);
+            
+            mazeWorker.postMessage({
+                action: 'buildAndFindAllPaths',
+                imageData: imgDataForWorker,
+                imageWidth: originalImage.naturalWidth, imageHeight: originalImage.naturalHeight,
+                cellSize: parseInt(cellSizeInput.value), pathThreshold: parseInt(pathThresholdInput.value),
+                startCoords, endCoords,
+                MAX_PATHS_TO_FIND: MAX_PATHS_TO_FIND_CONST,
+                MAX_DFS_SEARCH_TIME_MS: MAX_DFS_SEARCH_TIME_MS_CONST
+            }, [imgDataForWorker.data.buffer]);
         });
         
-        function validateGridAndPoints() {
-            if (mazeGrid.length === 0 || (mazeGrid[0] && mazeGrid[0].length === 0)) {
-                 updateStatus('Error: Map grid unreadable. Adjust tools.', 'error'); return false;
-            }
-            if (!isValidPoint(startCoords) || !mazeGrid[startCoords.y][startCoords.x]) {
-                 updateStatus('Start landmark is on an impassable area or off map.', 'error'); return false;
-            }
-            if (!isValidPoint(endCoords) || !mazeGrid[endCoords.y][endCoords.x]) {
-                 updateStatus('Destination landmark is on an impassable area or off map.', 'error'); return false;
-            }
-            return true;
-        }
-
-        function isValidPoint(coord) {
-            return coord && coord.y >= 0 && coord.y < gridHeight && coord.x >= 0 && coord.x < gridWidth;
-        }
-
-        // OPTIMIZED buildMazeGrid
-        let fullImageData = null;
-        let fullImageDataWidth = 0;
-
-        function buildMazeGrid() {
-            const cellSize = parseInt(cellSizeInput.value);
-            const pathThreshold = parseInt(pathThresholdInput.value);
-            gridWidth = Math.floor(originalImage.naturalWidth / cellSize);
-            gridHeight = Math.floor(originalImage.naturalHeight / cellSize);
-            if (gridWidth <= 0 || gridHeight <= 0) { mazeGrid = []; return; }
-
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = originalImage.naturalWidth;
-            tempCanvas.height = originalImage.naturalHeight;
-            const tempCtx = tempCanvas.getContext('2d', { willReadFrequently: true }); // Hint for performance
-            tempCtx.drawImage(originalImage, 0, 0);
-            
-            // Get pixel data for the entire image ONCE
-            try {
-                const imgData = tempCtx.getImageData(0, 0, originalImage.naturalWidth, originalImage.naturalHeight);
-                fullImageData = imgData.data;
-                fullImageDataWidth = imgData.width;
-            } catch (e) {
-                console.error("Could not get full image data:", e);
-                mazeGrid = []; return; // Critical error
-            }
-
-            mazeGrid = [];
-            for (let y = 0; y < gridHeight; y++) {
-                const row = [];
-                for (let x = 0; x < gridWidth; x++) {
-                    const sx = x * cellSize; const sy = y * cellSize;
-                    let sumBrightness = 0; let pixelCount = 0;
-                    // Iterate over pixels within this cell using the pre-fetched fullImageData
-                    for (let cellPixY = 0; cellPixY < cellSize; cellPixY++) {
-                        for (let cellPixX = 0; cellPixX < cellSize; cellPixX++) {
-                            const actualX = sx + cellPixX;
-                            const actualY = sy + cellPixY;
-                            if (actualX < originalImage.naturalWidth && actualY < originalImage.naturalHeight) {
-                                const R_index = (actualY * fullImageDataWidth + actualX) * 4;
-                                if (R_index + 2 < fullImageData.length) { // Bounds check
-                                   sumBrightness += (fullImageData[R_index] + fullImageData[R_index+1] + fullImageData[R_index+2]) / 3;
-                                   pixelCount++;
-                                }
-                            }
-                        }
-                    }
-                    const avgBrightness = pixelCount > 0 ? sumBrightness / pixelCount : 0;
-                    row.push(avgBrightness > pathThreshold ? 1 : 0);
-                }
-                mazeGrid.push(row);
-            }
-            fullImageData = null; // Release memory
-        }
-
-
-        function solveBFS() { /* ... unchanged from previous good version ... */ 
-            const queue = [{ x: startCoords.x, y: startCoords.y, path: [] }];
-            const visited = new Set([`${startCoords.x},${startCoords.y}`]);
-            const directions = [ { dx: 0, dy: -1 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 }, { dx: 1, dy: 0 } ];
-            while (queue.length > 0) {
-                const current = queue.shift(); const { x, y, path } = current;
-                if (x === endCoords.x && y === endCoords.y) return path.concat([{ x, y }]);
-                for (const dir of directions) {
-                    const nextX = x + dir.dx; const nextY = y + dir.dy;
-                    if (isValidPoint({x:nextX, y:nextY}) && mazeGrid[nextY][nextX] === 1 && !visited.has(`${nextX},${nextY}`)) {
-                        visited.add(`${nextX},${nextY}`);
-                        queue.push({ x: nextX, y: nextY, path: path.concat([{x,y}]) });
-                    }
-                }
-            }
-            return null;
-        }
-        
-        function solveDFS_findAllPaths() { /* ... unchanged from previous good version ... */ 
-            const allPathsFound = []; const currentPathStack = []; const visitedInThisPath = new Set();
-            const startTime = Date.now(); let limitReachedType = null;
-            function dfsRecursive(currX, currY) {
-                if (allPathsFound.length >= MAX_PATHS_TO_FIND) { limitReachedType = 'max routes'; return; }
-                if (Date.now() - startTime > MAX_DFS_SEARCH_TIME_MS) { limitReachedType = 'time limit'; return; }
-                currentPathStack.push({x: currX, y: currY}); visitedInThisPath.add(`${currX},${currY}`);
-                if (currX === endCoords.x && currY === endCoords.y) {
-                    allPathsFound.push([...currentPathStack]); 
-                } else {
-                    const directions = [ { dx: 0, dy: -1 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 } ]; 
-                    for (const dir of directions) {
-                        if (limitReachedType) break; 
-                        const nextX = currX + dir.dx; const nextY = currY + dir.dy;
-                        if (isValidPoint({x:nextX, y:nextY}) && mazeGrid[nextY][nextX] === 1 && !visitedInThisPath.has(`${nextX},${nextY}`)) {
-                            dfsRecursive(nextX, nextY);
-                        }
-                    }
-                }
-                visitedInThisPath.delete(`${currX},${currY}`); currentPathStack.pop();
-            }
-            dfsRecursive(startCoords.x, startCoords.y);
-            return { paths: allPathsFound, limitReached: !!limitReachedType, limitType: limitReachedType };
-        }
-        
-        downloadButton.addEventListener('click', async () => {
+        downloadButton.addEventListener('click', async () => { /* ... same ... */ 
             if (isProcessing || !originalImage || !currentSolutionPath) { updateStatus('No marked map to download.', 'error'); return; }
             updateStatus('Preparing map for download...', 'info', true);
-            await new Promise(resolve => setTimeout(resolve, 20)); // UI update
+            await new Promise(resolve => setTimeout(resolve, 20)); 
             const tempCanvas = document.createElement('canvas');
             tempCanvas.width = originalImage.naturalWidth; tempCanvas.height = originalImage.naturalHeight;
             const tempCtx = tempCanvas.getContext('2d');
             tempCtx.drawImage(originalImage, 0, 0);
             if (currentSolutionPath && currentSolutionPath.length > 0) {
-                 const cellSize = parseInt(cellSizeInput.value);
-                 drawPathOnContext(tempCtx, currentSolutionPath, PATH_COLOR_JS, cellSize);
+                 const cellSizeVal = parseInt(cellSizeInput.value);
+                 drawPathOnContext(tempCtx, currentSolutionPath, PATH_COLOR_JS, cellSizeVal);
             }
             const dataURL = tempCanvas.toDataURL('image/png'); const link = document.createElement('a');
             link.download = 'solved_maze_map.png'; link.href = dataURL;
@@ -640,25 +584,24 @@
             statusLoader.style.display = 'none';
         });
 
-        function drawPathOnContext(targetCtx, path, color, cellSize) { 
+        function drawPathOnContext(targetCtx, path, color, cellSizeVal) { /* ... same ... */ 
             if (!path || path.length === 0) return;
-            targetCtx.strokeStyle = color; targetCtx.lineWidth = Math.max(1.5, Math.floor(cellSize * 0.35));
+            targetCtx.strokeStyle = color; targetCtx.lineWidth = Math.max(1.5, Math.floor(cellSizeVal * 0.35));
             targetCtx.lineCap = "round"; targetCtx.lineJoin = "round";
             targetCtx.beginPath();
-            targetCtx.moveTo(path[0].x * cellSize + cellSize / 2, path[0].y * cellSize + cellSize / 2);
+            targetCtx.moveTo(path[0].x * cellSizeVal + cellSizeVal / 2, path[0].y * cellSizeVal + cellSizeVal / 2);
             for (let i = 1; i < path.length; i++) {
-                targetCtx.lineTo(path[i].x * cellSize + cellSize / 2, path[i].y * cellSize + cellSize / 2);
+                targetCtx.lineTo(path[i].x * cellSizeVal + cellSizeVal / 2, path[i].y * cellSizeVal + cellSizeVal / 2);
             }
             targetCtx.stroke();
         }
         
         function updateStatus(message, type = 'info', showLoader = false) {
-            statusSpan.textContent = message; // Direct update, no typewriter
+            statusSpan.textContent = message; 
             statusLoader.style.display = showLoader ? 'block' : 'none';
             const statusTypeColor = type === 'success' ? SUCCESS_COLOR_JS : (type === 'error' ? ERROR_COLOR_JS : INFO_COLOR_JS);
             statusSpan.parentElement.style.borderColor = statusTypeColor;
         }
-
     </script>
 </body>
 </html>
