@@ -4,53 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maze Solver</title>
-    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Mate+SC&family=Special+Elite&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --parchment-bg: #f5e8c8; 
-            --ink-text: #4a3b1f;    
-            --border-color: #8c7853; 
-            --accent-highlight: #c8a060; 
-            --path-color: #d9534f;    
-            --button-bg: #a08050;     
-            --button-hover-bg: #7a6030; 
-            --font-title: 'IM Fell English SC', serif;
-            --font-heading: 'Mate SC', serif;
-            --font-body: 'Special Elite', cursive; 
-            --border-radius-main: 10px;
-            --box-shadow-main: 5px 5px 15px rgba(0,0,0,0.2);
+            --bg-deep-space: #0f0c29;
+            --bg-nebula-start: #24243e;
+            --bg-nebula-end: #302b63;
+            --surface-color: rgba(20, 20, 50, 0.7); /* Frosted glass effect */
+            --surface-border: rgba(100, 100, 220, 0.3);
+            --text-primary: #e0e0ff;
+            --text-secondary: #b0b0d0;
+            --accent-cyan: #00e5ff;
+            --accent-magenta: #ff00ff;
+            --accent-glow: rgba(0, 229, 255, 0.5);
+            --path-color: var(--accent-magenta);
+            --button-bg: linear-gradient(145deg, var(--accent-cyan), var(--accent-magenta));
+            --button-hover-bg: linear-gradient(145deg, #00cfff, #e600e6);
+            --font-main: 'Montserrat', sans-serif;
+            --font-title: 'Orbitron', sans-serif;
+            --border-radius: 10px;
+            --box-shadow-soft: 0 4px 15px rgba(0,0,0,0.2);
+            --box-shadow-glow: 0 0 15px var(--accent-glow);
         }
 
-        .icon-upload::before { content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>'); margin-right: 8px; vertical-align: middle;}
-        .icon-tools::before { content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em"><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83zM3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM21 12c0 .55-.45 1-1 1s-1-.45-1-1 .45-1 1-1 1 .45 1 1z"/></svg>'); margin-right: 8px; vertical-align: middle;}
-        .icon-pin::before { content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>'); margin-right: 8px; vertical-align: middle;}
-        .icon-solve::before { content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1em" height="1em"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 12.17l7.59-7.59L19 6l-9 9z"/></svg>'); margin-right: 8px; vertical-align: middle;}
-
+        /* Simple SVG Icons - Styled for dark theme */
+        .icon svg { width: 1em; height: 1em; fill: var(--accent-cyan); margin-right: 8px; vertical-align: -0.15em; }
 
         body {
-            font-family: var(--font-body);
+            font-family: var(--font-main);
             margin: 0;
             padding: 20px;
-            background-color: var(--parchment-bg);
-            background-image: linear-gradient(rgba(200,180,140,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(200,180,140,0.05) 1px, transparent 1px);
-            background-size: 20px 20px;
-            color: var(--ink-text);
+            background-color: var(--bg-deep-space);
+            background-image: linear-gradient(to bottom right, var(--bg-nebula-start), var(--bg-nebula-end));
+            color: var(--text-primary);
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            font-size: 16px;
-            line-height: 1.7;
+            font-size: 15px;
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
         .main-container {
-            background-color: rgba(245, 232, 200, 0.85); 
-            border: 3px solid var(--border-color);
-            border-radius: var(--border-radius-main);
-            box-shadow: var(--box-shadow-main), inset 0 0 20px rgba(0,0,0,0.1);
+            background-color: var(--surface-color);
+            backdrop-filter: blur(10px); /* Frosted glass */
+            -webkit-backdrop-filter: blur(10px); /* Safari */
+            border: 1px solid var(--surface-border);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow-soft);
             padding: 30px;
             width: 95%;
-            max-width: 1000px;
+            max-width: 1200px; /* Increased max-width to help fit 4 columns */
             margin: 20px auto;
             display: flex;
             flex-direction: column;
@@ -59,51 +64,56 @@
 
         header h1 {
             font-family: var(--font-title);
-            color: var(--ink-text);
+            color: var(--text-primary);
             text-align: center;
-            font-size: 3em;
+            font-size: 2.8em;
             margin-bottom: 5px;
-            text-shadow: 1px 1px 1px var(--accent-highlight);
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px var(--accent-glow);
         }
         header p {
             text-align: center;
-            color: var(--ink-text);
-            font-size: 1.1em;
+            color: var(--text-secondary);
+            font-size: 1em;
             margin-top: 0;
             margin-bottom: 25px;
         }
 
         .controls-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(4, 1fr); /* Default to 4 columns */
             gap: 20px;
         }
 
         .control-group {
-            background-color: rgba(245, 232, 200, 0.6); 
+            background-color: rgba(30, 30, 60, 0.5); /* Darker frosted glass */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             padding: 20px;
             border-radius: 8px;
-            border: 1px dashed var(--border-color);
+            border: 1px solid var(--surface-border);
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
 
         .control-group h3 {
-            font-family: var(--font-heading);
-            color: var(--ink-text);
-            font-size: 1.4em;
+            font-family: var(--font-title);
+            font-size: 0.9em; /* Slightly smaller for fitting */
+            color: var(--accent-cyan);
             margin: 0 0 10px 0;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--surface-border);
             padding-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             display: flex;
             align-items: center;
         }
 
         .control-group label {
-            font-weight: bold;
-            color: var(--ink-text);
-            font-size: 1em;
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.9em;
         }
 
         .control-group input[type="file"],
@@ -111,51 +121,52 @@
         .control-group button {
             padding: 10px 12px;
             border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background-color: var(--parchment-bg);
-            color: var(--ink-text);
-            font-family: var(--font-body);
-            font-size: 1em;
-            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--surface-border);
+            background-color: rgba(10, 10, 30, 0.7);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 0.95em;
+            transition: all 0.2s ease;
         }
         .control-group input[type="file"]::file-selector-button {
-            background-color: var(--button-bg);
-            color: var(--parchment-bg);
+            background: var(--button-bg);
+            color: white;
             border: none;
             padding: 8px 10px;
             border-radius: 4px;
             cursor: pointer;
             margin-right: 10px;
-            font-family: var(--font-heading);
+            font-weight: 600;
         }
-         .control-group input[type="number"]:focus {
+         .control-group input:focus, .control-group button:focus {
             outline: none;
-            border-color: var(--accent-highlight);
-            box-shadow: 0 0 0 3px rgba(200, 160, 96, 0.3), inset 1px 1px 3px rgba(0,0,0,0.1);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 8px var(--accent-glow);
         }
 
         .control-group button {
-            background-color: var(--button-bg);
-            color: var(--parchment-bg);
-            font-family: var(--font-heading);
-            font-size: 1.1em;
+            background: var(--button-bg);
+            color: white;
+            font-weight: 600;
+            font-size: 1em;
             cursor: pointer;
-            border: 1px solid var(--border-color);
-            box-shadow: 2px 2px 3px rgba(0,0,0,0.2);
-            transition: all 0.1s ease-out;
+            border: none;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
         .control-group button:hover {
-            background-color: var(--button-hover-bg);
-            transform: translateY(-1px);
-            box-shadow: 3px 3px 5px rgba(0,0,0,0.25);
-        }
-        .control-group button:active {
-            transform: translateY(1px);
-            box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            background: var(--button-hover-bg);
+            box-shadow: var(--box-shadow-glow);
         }
         .control-group button.active {
-            background-color: var(--path-color);
+            background: linear-gradient(145deg, var(--accent-magenta), #c000c0);
         }
+        .control-group button#downloadButton {
+            background: linear-gradient(145deg, #4CAF50, #2E7D32);
+        }
+         .control-group button#downloadButton:hover {
+            background: linear-gradient(145deg, #66BB6A, #388E3C);
+        }
+
 
         .info-bar {
             display: flex;
@@ -163,53 +174,71 @@
             flex-wrap: wrap;
             gap: 15px;
             padding: 10px 15px;
-            background-color: rgba(245, 232, 200, 0.7);
-            border: 1px solid var(--border-color);
+            background-color: rgba(30, 30, 60, 0.6);
+            border: 1px solid var(--surface-border);
             border-radius: 8px;
-            font-size: 1em;
+            font-size: 0.95em;
         }
         .info-bar p { margin: 5px;}
         .info-bar span {
-            color: var(--ink-text);
-            font-weight: bold;
-            font-family: var(--font-heading);
+            color: var(--accent-cyan);
+            font-weight: 600;
         }
 
         #status-container {
-            padding: 12px;
-            background-color: rgba(245, 232, 200, 0.7);
-            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            background-color: rgba(30, 30, 60, 0.6);
+            border: 1px solid var(--surface-border);
             border-radius: 8px;
             text-align: center;
             min-height: 24px;
-            font-family: var(--font-heading);
-            font-size: 1.1em;
-            position: relative; /* For potential loading animation later */
+            font-family: var(--font-main);
+            font-weight: 500;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         #status { min-height: 1.2em; display: inline-block; } 
+        .status-loader {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 229, 255, 0.2);
+            border-top-color: var(--accent-cyan);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none; /* Hidden by default */
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
 
         .maze-display-area {
             position: relative;
             width: 100%;
-            max-width: 600px; 
-            margin: 0 auto; 
-            border: 2px solid var(--border-color);
+            max-width: 700px; 
+            margin: 20px auto 0 auto; 
+            border: 1px solid var(--surface-border);
             border-radius: 8px;
             overflow: hidden; 
-            background-color: #fff; 
-            box-shadow: var(--box-shadow-main);
+            background-color: rgba(10,10,20,0.8); 
+            box-shadow: var(--box-shadow-soft);
         }
-        #mazeImage { display: block; width: 100%; height: auto; }
+        #mazeImage { display: block; width: 100%; height: auto; opacity: 0.7; }
         #solutionCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: auto; }
         
 
-        @media (max-width: 768px) {
-            body { font-size: 14px; }
-            header h1 { font-size: 2.2em; }
-            .main-container { padding: 15px; margin: 10px; }
+        /* Responsive Grid for Controls */
+        @media (max-width: 1100px) { /* Tablets and smaller desktops */
+            .controls-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) { /* Mobile */
+            .main-container { padding: 15px; margin-top: 10px;}
+            header h1 { font-size: 2em; }
             .controls-grid { grid-template-columns: 1fr; }
             .info-bar { flex-direction: column; align-items: center; gap: 5px; }
             .control-group {padding: 15px;}
+            body { font-size: 14px; }
         }
     </style>
 </head>
@@ -217,48 +246,51 @@
     <div class="main-container">
         <header>
             <h1>Maze Solver</h1>
-            <p>Unravel the twists and turns! Upload your ancient map and let us divine the path.</p>
+            <p>Navigate the cosmic labyrinth. Upload your star chart and find the celestial path.</p>
         </header>
 
         <div class="controls-grid">
             <div class="control-group">
-                <h3><span class="icon-upload"></span>1. Present the Scroll</h3>
+                <h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg></span>1. Load Star Chart</h3>
                 <label for="imageUpload">Upload Maze Image:</label>
                 <input type="file" id="imageUpload" accept="image/*">
             </div>
 
             <div class="control-group">
-                <h3><span class="icon-tools"></span>2. Scribe's Implements</h3>
-                <label for="cellSize" title="How finely to examine the map. Smaller numbers mean more detail but slower analysis. (e.g., 1-5 for complex, 5-10 for simpler)">Detail Level (Cell Size px):</label>
+                <h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.48 12.04c-.3-.31-.79-.31-1.09 0l-2.83 2.83-1.41-1.41c1.16-1.16 1.16-3.05 0-4.21l-1.41-1.41c-.3-.31-.79-.31-1.09 0s-.31.79 0 1.09l1.41 1.41c.58.58.58 1.53 0 2.11L12 15.06l-2.83-2.83c-.58-.58-.58-1.53 0-2.11l1.41-1.41c.3-.31.3-.81 0-1.11s-.79-.31-1.09 0l-1.41 1.41c-1.16 1.16-1.16 3.05 0 4.21l1.41 1.41L12 17.9l2.83-2.83c1.16-1.16 1.16-3.05 0-4.21l-1.41-1.41c-.3-.3-.3-.79 0-1.09s.79-.3 1.09 0l1.41 1.41c.58.58.58 1.53 0 2.11L14.94 15.06l2.83-2.83c.3-.3.3-.79 0-1.09zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></span>2. Scanner Config</h3>
+                <label for="cellSize" title="Resolution of the scan. Smaller values are more detailed but slower.">Detail Level (Cell Size px):</label>
                 <input type="number" id="cellSize" value="3" min="1" max="50">
-                <label for="pathThreshold" title="How light must a marking be to be considered a path? (0=Black, 255=White). If paths are dark, this won't work well.">Path Sensitivity (0-255):</label>
+                <label for="pathThreshold" title="Brightness threshold (0-255) to distinguish paths (brighter) from walls (darker).">Signal Threshold:</label>
                 <input type="number" id="pathThreshold" value="128" min="0" max="255">
             </div>
 
             <div class="control-group">
-                <h3><span class="icon-pin"></span>3. Mark the X's</h3>
-                <button id="autoDetectButton">Auto-Detect Start/End</button>
-                <button id="setStartButton">Set Start Manually</button>
-                <button id="setEndButton">Set End Manually</button>
+                <h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></span>3. Set Waypoints</h3>
+                <button id="autoDetectButton">Auto-Detect Waypoints</button>
+                <button id="setStartButton">Set Origin Manually</button>
+                <button id="setEndButton">Set Destination Manually</button>
             </div>
              <div class="control-group">
-                <h3><span class="icon-solve"></span>4. Chart the Course!</h3>
-                <button id="solveShortestButton">Find Quickest Route</button>
-                <button id="findAllPathsButton">Explore All Passages (Beware!)</button>
-                <button id="downloadButton" style="display:none;">Download Marked Map</button>
+                <h3><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 12.17l7.59-7.59L19 6l-9 9z"/></svg></span>4. Engage!</h3>
+                <button id="solveShortestButton">Find Hyperlane</button>
+                <button id="findAllPathsButton">Explore Nebula (Slow!)</button>
+                <button id="downloadButton" style="display:none;">Download Chart</button>
             </div>
         </div>
 
         <div class="info-bar">
-            <p>Start: <span id="startPointInfo">Unmarked</span></p>
-            <p>End: <span id="endPointInfo">Unmarked</span></p>
-            <p>Routes Charted: <span id="pathsFoundInfo">None</span></p>
+            <p>Origin: <span id="startPointInfo">Undefined</span></p>
+            <p>Destination: <span id="endPointInfo">Undefined</span></p>
+            <p>Routes Logged: <span id="pathsFoundInfo">None</span></p>
         </div>
         
-        <div id="status-container"><span id="status">Awaiting your command, Map Master!</span></div>
+        <div id="status-container">
+            <div class="status-loader" id="statusLoader"></div>
+            <span id="status">Awaiting astrogation data...</span>
+        </div>
         
         <div class="maze-display-area">
-            <img id="mazeImage" src="#" alt="Uploaded Maze" style="display:none;">
+            <img id="mazeImage" src="#" alt="Uploaded Star Chart" style="display:none;">
             <canvas id="solutionCanvas"></canvas>
         </div>
     </div>
@@ -278,6 +310,7 @@
         const findAllPathsButton = document.getElementById('findAllPathsButton');
         const downloadButton = document.getElementById('downloadButton');
         const statusSpan = document.getElementById('status');
+        const statusLoader = document.getElementById('statusLoader');
         const startPointInfo = document.getElementById('startPointInfo');
         const endPointInfo = document.getElementById('endPointInfo');
         const pathsFoundInfo = document.getElementById('pathsFoundInfo');
@@ -294,9 +327,9 @@
         let typeAwaitTimeout = null;
 
         const PATH_COLOR_JS = getComputedStyle(document.documentElement).getPropertyValue('--path-color').trim();
-        const SUCCESS_COLOR_JS = getComputedStyle(document.documentElement).getPropertyValue('--success-color') || '#2ecc71';
-        const ERROR_COLOR_JS = getComputedStyle(document.documentElement).getPropertyValue('--error-color') || '#e74c3c';
-        const BUTTON_BG_JS = getComputedStyle(document.documentElement).getPropertyValue('--button-bg') || '#a08050'; // Used as default status border
+        const ACCENT_CYAN_JS = getComputedStyle(document.documentElement).getPropertyValue('--accent-cyan').trim();
+        const ERROR_COLOR_JS = '#ff4444'; // A more vibrant red for dark theme
+        const SUCCESS_COLOR_JS = '#00C851'; // A vibrant green
 
         const MAX_PATHS_TO_FIND = 500;
         const MAX_DFS_SEARCH_TIME_MS = 15000; 
@@ -306,32 +339,19 @@
         function typeWriter(element, text, speed = 50) {
             return new Promise((resolve) => {
                 let i = 0;
-                element.innerHTML = ''; // Clear previous text
+                element.innerHTML = ''; 
                 let aborted = false;
+                const controller = { abort: () => { aborted = true; } };
 
-                const controller = {
-                    abort: () => { aborted = true; }
-                };
-
-                if (currentStatusTypewriterController) {
-                    currentStatusTypewriterController.abort(); // Abort previous typing on this element
-                }
-                currentStatusTypewriterController = controller; // Set new controller
+                if (currentStatusTypewriterController) currentStatusTypewriterController.abort();
+                currentStatusTypewriterController = controller;
 
                 function type() {
-                    if (aborted) {
-                        element.innerHTML = text; // Finish text immediately if aborted by a new call
-                        resolve();
-                        return;
-                    }
+                    if (aborted) { element.innerHTML = text; resolve(); return; }
                     if (i < text.length) {
-                        element.innerHTML += text.charAt(i);
-                        i++;
+                        element.innerHTML += text.charAt(i); i++;
                         typeAwaitTimeout = setTimeout(type, speed);
-                    } else {
-                        currentStatusTypewriterController = null; // Clear controller when done
-                        resolve();
-                    }
+                    } else { currentStatusTypewriterController = null; resolve(); }
                 }
                 type();
             });
@@ -352,7 +372,7 @@
                         imageDisplayedHeight = mazeImage.offsetHeight;
                         ctx.clearRect(0, 0, solutionCanvas.width, solutionCanvas.height);
                         resetState();
-                        updateStatus('Map unfurled. Adjust implements or mark the X\'s.');
+                        updateStatus('Star chart loaded. Configure scanners or set waypoints.');
                         downloadButton.style.display = 'none';
                         currentSolutionPath = null;
                     }
@@ -373,77 +393,73 @@
         function resetState() {
             mazeGrid = []; startCoords = null; endCoords = null; settingMode = null;
             currentSolutionPath = null;
-            startPointInfo.textContent = 'Unmarked'; endPointInfo.textContent = 'Unmarked';
+            startPointInfo.textContent = 'Undefined'; endPointInfo.textContent = 'Undefined';
             pathsFoundInfo.textContent = 'None';
             setStartButton.classList.remove('active'); setEndButton.classList.remove('active');
             if(solutionCanvas.width > 0 && solutionCanvas.height > 0) {
                 ctx.clearRect(0, 0, solutionCanvas.width, solutionCanvas.height);
             }
-            updateStatus('Awaiting new charts or commands.');
+            updateStatus('Awaiting astrogation data...');
             downloadButton.style.display = 'none';
             stopDynamicStatusUpdates();
         }
         
-        async function startDynamicStatusUpdates(initialMessages = [], dynamicCycleMessages = [], operationPromise) {
-            stopDynamicStatusUpdates(); // Clear any existing dynamic updates
+        async function startDynamicStatusUpdates(initialMessages = [], dynamicCycleMessages = []) {
+            stopDynamicStatusUpdates(); 
+            statusLoader.style.display = 'block';
 
             for (const msg of initialMessages) {
-                await updateStatus(msg.text, msg.type, msg.speed || 30);
-                await new Promise(r => setTimeout(r, 200)); // Short pause
+                await updateStatus(msg.text, msg.type, msg.speed || 30, false); // Don't hide loader yet
+                await new Promise(r => setTimeout(r, 200)); 
             }
 
             let dynamicIndex = 0;
             if (dynamicCycleMessages.length > 0) {
                 dynamicStatusInterval = setInterval(async () => {
-                    // Check if operationPromise is still pending; if not, stop cycling
-                    // This requires operationPromise to be a real promise we can check
-                    // For now, we'll rely on stopDynamicStatusUpdates being called explicitly
-                    if (!dynamicStatusInterval) return; // Interval was cleared
-
+                    if (!dynamicStatusInterval) return; 
                     await typeWriter(statusSpan, dynamicCycleMessages[dynamicIndex % dynamicCycleMessages.length], 50);
-                    statusSpan.parentElement.style.borderColor = BUTTON_BG_JS;
+                    statusSpan.parentElement.style.borderColor = ACCENT_CYAN_JS; // Default processing color
                     dynamicIndex++;
-                }, 1800); // Cycle messages
+                }, 2200); 
             }
-            // The operationPromise will eventually call updateStatus with its final result,
-            // which will automatically stop this cycle via currentStatusTypewriterController.abort.
         }
 
         function stopDynamicStatusUpdates() {
             if (dynamicStatusInterval) clearInterval(dynamicStatusInterval);
             dynamicStatusInterval = null;
-            if (currentStatusTypewriterController) { // Abort any ongoing typing in statusSpan
+            if (currentStatusTypewriterController) {
                 currentStatusTypewriterController.abort();
                 currentStatusTypewriterController = null;
             }
+            statusLoader.style.display = 'none';
         }
         
         autoDetectButton.addEventListener('click', async () => {
-            if (!originalImage) { updateStatus('Unfurl a map first, explorer!', 'error'); return; }
+            if (!originalImage) { await updateStatus('Load a star chart first, Captain!', 'error'); return; }
             
             startDynamicStatusUpdates(
-                [{text: "Commencing automatic reconnaissance...", type: 'info', speed: 30}],
+                [{text: "Initiating automated waypoint scan...", type: 'info', speed: 30}],
                 [ 
-                    "Analyzing map boundaries...", "Scanning for distinct entry points...",
-                    "Consulting ancient cartography secrets...", "Divining potential start and end X's..."
+                    "Analyzing chart peripheries...", "Searching for prominent warp signatures...",
+                    "Cross-referencing stellar cartography database...", "Identifying potential origin and destination points..."
                 ]
             );
 
             try {
-                await new Promise(resolve => setTimeout(resolve, 50)); // Allow UI to update
+                await new Promise(resolve => setTimeout(resolve, 50)); 
                 buildMazeGrid();
                 if (mazeGrid.length === 0 || (mazeGrid[0] && mazeGrid[0].length === 0)) {
-                     updateStatus('Error: Scribe could not decipher grid for auto-detection.', 'error');
+                     await updateStatus('Error: Chart grid unreadable for auto-detection.', 'error');
                      stopDynamicStatusUpdates(); return;
                 }
                 const detectionResult = performAutoDetectionSummary();
                 drawPointsAndPath();
-                updateStatus(detectionResult.message, detectionResult.success ? 'success' : 'warning');
+                await updateStatus(detectionResult.message, detectionResult.success ? 'success' : 'warning');
             } catch (e) {
                 console.error("Error in auto-detection:", e);
-                updateStatus("An unexpected error occurred during auto-detection.", 'error');
+                await updateStatus("Anomaly detected during automated scan.", 'error');
             } finally {
-                stopDynamicStatusUpdates(); // Ensure cycle stops after operation
+                stopDynamicStatusUpdates(); 
             }
         });
 
@@ -454,27 +470,27 @@
             for (let x = gridWidth - 1; x >= 0; x--) { if (mazeGrid[gridHeight-1][x]) { endCoords = {x,y:gridHeight-1}; E_found=true; break; }}
             if(!E_found){ for (let y = gridHeight - 1; y >= 0; y--) { if (mazeGrid[y][gridWidth-1]) { endCoords = {x:gridWidth-1,y}; E_found=true; break; }}}
             
-            if (startCoords) startPointInfo.textContent = `(${startCoords.x}, ${startCoords.y})`; else startPointInfo.textContent = 'Unmarked';
-            if (endCoords) endPointInfo.textContent = `(${endCoords.x}, ${endCoords.y})`; else endPointInfo.textContent = 'Unmarked';
+            if (startCoords) startPointInfo.textContent = `(${startCoords.x}, ${startCoords.y})`; else startPointInfo.textContent = 'Undefined';
+            if (endCoords) endPointInfo.textContent = `(${endCoords.x}, ${endCoords.y})`; else endPointInfo.textContent = 'Undefined';
             
             let message = ""; let success = false;
-            if(S_found && E_found) { message = `Trail markers divined automatically! Start: (${startCoords.x},${startCoords.y}), End: (${endCoords.x},${endCoords.y})`; success = true; }
-            else if (S_found || E_found) { message = `Some markers found. Start: ${S_found? '('+startCoords.x+','+startCoords.y+')':'N/A'}, End: ${E_found? '('+endCoords.x+','+endCoords.y+')':'N/A'}. Verify.`; success = true;}
-            else { message = 'Automatic divination failed. Please mark your trail by hand.'; success = false; }
+            if(S_found && E_found) { message = `Waypoints locked: Origin (${startCoords.x},${startCoords.y}), Dest. (${endCoords.x},${endCoords.y})`; success = true; }
+            else if (S_found || E_found) { message = `Partial lock: Origin ${S_found? '('+startCoords.x+','+startCoords.y+')':'N/A'}, Dest. ${E_found? '('+endCoords.x+','+endCoords.y+')':'N/A'}. Verify.`; success = true;}
+            else { message = 'Automated waypoint scan inconclusive. Please set manually.'; success = false; }
             return {success, message};
         }
 
 
         setStartButton.addEventListener('click', () => {
-            if (!originalImage) { updateStatus('Unfurl a map first!', 'error'); return; }
+            if (!originalImage) { updateStatus('Load a star chart first!', 'error'); return; }
             settingMode = 'start'; setStartButton.classList.add('active'); setEndButton.classList.remove('active');
-            updateStatus('Click on the map to mark the START of your expedition.');
+            updateStatus('Click on the chart to set expedition ORIGIN.');
         });
 
         setEndButton.addEventListener('click', () => {
-            if (!originalImage) { updateStatus('Unfurl a map first!', 'error'); return; }
+            if (!originalImage) { updateStatus('Load a star chart first!', 'error'); return; }
             settingMode = 'end'; setEndButton.classList.add('active'); setStartButton.classList.remove('active');
-            updateStatus('Click on the map to mark your GOAL.');
+            updateStatus('Click on the chart to set expedition DESTINATION.');
         });
 
         solutionCanvas.addEventListener('click', (event) => {
@@ -488,11 +504,11 @@
 
             if (settingMode === 'start') {
                 startCoords = { x: gridX, y: gridY }; startPointInfo.textContent = `(${gridX}, ${gridY})`;
-                updateStatus('Start point marked. Now mark your goal or chart the course!');
+                updateStatus('Origin waypoint set. Now set destination or engage thrusters!');
                 setStartButton.classList.remove('active');
             } else if (settingMode === 'end') {
                 endCoords = { x: gridX, y: gridY }; endPointInfo.textContent = `(${gridX}, ${gridY})`;
-                updateStatus('Goal marked. Ready to chart the course!');
+                updateStatus('Destination waypoint set. Ready to engage!');
                 setEndButton.classList.remove('active');
             }
             settingMode = null; currentSolutionPath = null; downloadButton.style.display = 'none';
@@ -520,9 +536,9 @@
         
         function drawPath(path, color, cellSize) {
             if (!path || path.length === 0) return;
-            ctx.strokeStyle = color; ctx.lineWidth = Math.max(2, Math.floor(cellSize * 0.45));
+            ctx.strokeStyle = color; ctx.lineWidth = Math.max(2, Math.floor(cellSize * 0.5)); // Thicker path
             ctx.lineCap = "round"; ctx.lineJoin = "round";
-            ctx.shadowColor = "rgba(0,0,0,0.3)"; ctx.shadowBlur = 3; ctx.shadowOffsetX = 1; ctx.shadowOffsetY = 1;
+            ctx.shadowColor = color; ctx.shadowBlur = 8; // Path glow
             ctx.beginPath();
             ctx.moveTo(path[0].x * cellSize + cellSize / 2, path[0].y * cellSize + cellSize / 2);
             for (let i = 1; i < path.length; i++) {
@@ -533,64 +549,61 @@
         }
 
         async function commonSolvePreamble(operationName) {
-            if (!originalImage) { updateStatus('Unfurl a map first, explorer!', 'error'); return false; }
-            if (!startCoords || !endCoords) { updateStatus('Mark both X\'s on your map before charting.', 'error'); return false; }
+            if (!originalImage) { await updateStatus('Load a star chart first, Captain!', 'error'); return false; }
+            if (!startCoords || !endCoords) { await updateStatus('Set both Origin and Destination waypoints.', 'error'); return false; }
             currentSolutionPath = null; downloadButton.style.display = 'none'; pathsFoundInfo.textContent = 'None';
             
-            let dynamicMessagesForOperation = [
-                "Deciphering the ancient map's grid...",
-                `Preparing for ${operationName}...`,
-                "Consulting the compass of destiny...",
-                "Checking supplies for the journey...",
-                "The path is almost ready to be revealed..."
-            ];
             startDynamicStatusUpdates(
-                [{text: `The quest to ${operationName} begins!`, type: 'success', speed:30}],
-                dynamicMessagesForOperation
+                [{text: `Engaging engines for: ${operationName}!`, type: 'success', speed:30}],
+                [
+                    "Calibrating navigation sensors...", "Plotting primary vector...",
+                    "Checking for subspace anomalies...", "Engaging warp field calculations...",
+                    "Course computation in progress..."
+                ]
             );
             return true;
         }
 
         solveShortestButton.addEventListener('click', async () => {
-            if(!await commonSolvePreamble("find the quickest route")) return;
+            if(!await commonSolvePreamble("Hyperlane Calculation")) return;
             try {
                 await new Promise(resolve => setTimeout(resolve, 50)); 
                 buildMazeGrid();
                 if (!validateGridAndPoints()) { stopDynamicStatusUpdates(); return; }
                 
-                await updateStatus("Grid deciphered. Seeking the most efficient passage...", "info", 40);
+                await updateStatus("Chart grid decoded. Calculating optimal hyperlane...", "info", 40);
                 await new Promise(resolve => setTimeout(resolve, 50));
 
                 currentSolutionPath = solveBFS();
                 drawPointsAndPath();
                 if (currentSolutionPath) {
-                    pathsFoundInfo.textContent = '1 (quickest)';
+                    pathsFoundInfo.textContent = '1 (Optimal)';
                     downloadButton.style.display = 'block';
-                    updateStatus('The most direct route is charted!', 'success');
+                    await updateStatus('Optimal hyperlane calculated and displayed!', 'success');
                 } else { 
-                    updateStatus('No direct route found on this map.', 'error');
+                    await updateStatus('No viable hyperlane found between waypoints.', 'error');
                 }
             } catch(e) {
                 console.error("Error finding shortest path:", e);
-                updateStatus("An unexpected error occurred while charting the course.", "error");
+                await updateStatus("Navigation computer encountered an anomaly.", "error");
             } finally {
                 stopDynamicStatusUpdates();
             }
         });
         
         findAllPathsButton.addEventListener('click', async () => {
-            if(!await commonSolvePreamble("explore all passages")) return;
-            if (!confirm("WARNING: Exploring all passages can be a lengthy endeavor on complex maps. The search may halt if it becomes too vast or takes too long. Venture forth?")) {
+            if(!await commonSolvePreamble("Nebula Exploration")) return;
+            if (!confirm("WARNING: Full nebula exploration is resource-intensive. Search may be limited by complexity or duration. Proceed with deep scan?")) {
                 stopDynamicStatusUpdates();
-                updateStatus('Exploration of all routes cancelled by decree.', 'warning'); return;
+                await updateStatus('Nebula exploration aborted by user command.', 'warning'); return;
             }
             try {
                 await new Promise(resolve => setTimeout(resolve, 50));
                 buildMazeGrid();
                 if (!validateGridAndPoints()) { stopDynamicStatusUpdates(); return; }
 
-                await updateStatus("Grid deciphered. Commencing full exploration for all known passages...", "info", 40);
-                await updateStatus(`(Exploration limits: ${MAX_PATHS_TO_FIND} routes or ${MAX_DFS_SEARCH_TIME_MS/1000}s duration)`, "info", 40);
+                await updateStatus("Chart grid decoded. Initiating deep nebula scan for all routes...", "info", 40);
+                await updateStatus(`(Scan limits: ${MAX_PATHS_TO_FIND} routes or ${MAX_DFS_SEARCH_TIME_MS/1000}s duration)`, "info", 40);
                 await new Promise(resolve => setTimeout(resolve, 50));
                 
                 const result = solveDFS_findAllPaths();
@@ -598,19 +611,19 @@
                 if (result.paths.length > 0) {
                     currentSolutionPath = result.paths[Math.floor(Math.random() * result.paths.length)]; 
                     drawPointsAndPath();
-                    updateStatus(`Found ${result.paths.length} passages${result.limitReached ? ' (exploration limited)' : ''}. One is shown.`, 'success');
+                    await updateStatus(`Scan complete: ${result.paths.length} routes logged${result.limitReached ? ' (scan limited)' : ''}. Displaying one.`, 'success');
                     downloadButton.style.display = 'block';
                     if(result.limitReached) {
-                        await new Promise(r => setTimeout(r, 100)); // Ensure previous status types out
-                        updateStatus(`Exploration was wisely concluded due to ${result.limitType} limit.`, 'warning');
+                        await new Promise(r => setTimeout(r, 100)); 
+                        await updateStatus(`Deep scan concluded due to ${result.limitType} protocols.`, 'warning');
                     }
                 } else {
                     drawPointsAndPath(); 
-                    updateStatus('No passages found between these X\'s.', 'error');
+                    await updateStatus('Deep scan found no routes between these waypoints.', 'error');
                 }
             } catch (e) {
                 console.error("Error finding all paths:", e);
-                updateStatus("An unexpected error occurred during deep exploration.", "error");
+                await updateStatus("Subspace interference during deep scan. Results inconclusive.", "error");
             } finally {
                 stopDynamicStatusUpdates();
             }
@@ -618,13 +631,13 @@
         
         function validateGridAndPoints() {
             if (mazeGrid.length === 0 || (mazeGrid[0] && mazeGrid[0].length === 0)) {
-                 updateStatus('Error: The map\'s grid is unreadable. Adjust your implements.', 'error'); return false;
+                 updateStatus('Error: Star chart grid undecipherable. Adjust scanner config.', 'error', 50, false); return false;
             }
             if (!isValidPoint(startCoords) || !mazeGrid[startCoords.y][startCoords.x]) {
-                 updateStatus('Start X is on an impassable region or off the map.', 'error'); return false;
+                 updateStatus('Origin waypoint is in uncharted/obstructed space.', 'error', 50, false); return false;
             }
             if (!isValidPoint(endCoords) || !mazeGrid[endCoords.y][endCoords.x]) {
-                 updateStatus('Goal X is on an impassable region or off the map.', 'error'); return false;
+                 updateStatus('Destination waypoint is in uncharted/obstructed space.', 'error', 50, false); return false;
             }
             return true;
         }
@@ -667,9 +680,7 @@
             const directions = [ { dx: 0, dy: -1 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 }, { dx: 1, dy: 0 } ];
             while (queue.length > 0) {
                 const current = queue.shift(); const { x, y, path } = current;
-                if (x === endCoords.x && y === endCoords.y) {
-                    return path.concat([{ x, y }]);
-                }
+                if (x === endCoords.x && y === endCoords.y) return path.concat([{ x, y }]);
                 for (const dir of directions) {
                     const nextX = x + dir.dx; const nextY = y + dir.dy;
                     if (isValidPoint({x:nextX, y:nextY}) && mazeGrid[nextY][nextX] === 1 && !visited.has(`${nextX},${nextY}`)) {
@@ -706,8 +717,8 @@
             return { paths: allPathsFound, limitReached: !!limitReachedType, limitType: limitReachedType };
         }
         
-        downloadButton.addEventListener('click', () => {
-            if (!originalImage || !currentSolutionPath) { updateStatus('No marked map to archive.', 'error'); return; }
+        downloadButton.addEventListener('click', async () => {
+            if (!originalImage || !currentSolutionPath) { await updateStatus('No charted course to download.', 'error'); return; }
             const tempCanvas = document.createElement('canvas');
             tempCanvas.width = originalImage.naturalWidth; tempCanvas.height = originalImage.naturalHeight;
             const tempCtx = tempCanvas.getContext('2d');
@@ -717,16 +728,16 @@
                  drawPathOnContext(tempCtx, currentSolutionPath, PATH_COLOR_JS, cellSize);
             }
             const dataURL = tempCanvas.toDataURL('image/png'); const link = document.createElement('a');
-            link.download = 'solved_maze_map.png'; link.href = dataURL;
+            link.download = 'solved_starmap.png'; link.href = dataURL;
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
-            updateStatus('Marked map archived to your stores!', 'success');
+            await updateStatus('Marked star chart downloaded to archives!', 'success');
         });
 
         function drawPathOnContext(targetCtx, path, color, cellSize) { 
             if (!path || path.length === 0) return;
-            targetCtx.strokeStyle = color; targetCtx.lineWidth = Math.max(2, Math.floor(cellSize * 0.45));
+            targetCtx.strokeStyle = color; targetCtx.lineWidth = Math.max(2, Math.floor(cellSize * 0.5));
             targetCtx.lineCap = "round"; targetCtx.lineJoin = "round";
-            targetCtx.shadowColor = "rgba(0,0,0,0.3)"; targetCtx.shadowBlur = 3; targetCtx.shadowOffsetX = 1; targetCtx.shadowOffsetY = 1;
+            targetCtx.shadowColor = color; targetCtx.shadowBlur = 8; targetCtx.shadowOffsetX = 0; targetCtx.shadowOffsetY = 0;
             targetCtx.beginPath();
             targetCtx.moveTo(path[0].x * cellSize + cellSize / 2, path[0].y * cellSize + cellSize / 2);
             for (let i = 1; i < path.length; i++) {
@@ -736,13 +747,15 @@
             targetCtx.shadowColor = "transparent"; targetCtx.shadowBlur = 0;
         }
         
-        async function updateStatus(message, type = 'info', speed = 30) {
-            if (dynamicStatusInterval) clearInterval(dynamicStatusInterval); 
-            dynamicStatusInterval = null;
-            // No need to abort currentStatusTypewriterController here as typeWriter itself handles it.
+        async function updateStatus(message, type = 'info', speed = 30, showLoaderOverride) {
+            if (typeof showLoaderOverride === 'undefined') {
+                 statusLoader.style.display = (type === 'info' || type === 'processing') ? 'block' : 'none';
+            } else {
+                statusLoader.style.display = showLoaderOverride ? 'block' : 'none';
+            }
             
-            const statusTypeClass = type === 'success' ? SUCCESS_COLOR_JS : (type === 'error' ? ERROR_COLOR_JS : BUTTON_BG_JS);
-            statusSpan.parentElement.style.borderColor = statusTypeClass;
+            const statusTypeColor = type === 'success' ? SUCCESS_COLOR_JS : (type === 'error' ? ERROR_COLOR_JS : ACCENT_CYAN_JS);
+            statusSpan.parentElement.style.borderColor = statusTypeColor;
             await typeWriter(statusSpan, message, speed);
         }
 
